@@ -1,5 +1,5 @@
 {
-  "name": "benimlepaylas-backend",
+  "name": "protein-shop-full-stack",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -31,7 +31,6 @@
     "@prisma/client": "^5.22.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
-    "@types/iyzipay": "^2.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^20.19.27",
