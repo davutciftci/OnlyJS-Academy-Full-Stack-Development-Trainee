@@ -93,8 +93,6 @@ export default function ProductDetailPage() {
                     nutritionInfo: productData.nutritionValues?.values?.map((nv: NutritionValue) =>
                         `${nv.name}: ${nv.value} ${nv.unit}`
                     ) || productData.nutritionInfo || [],
-                    reviews: 0,
-                    rating: 5,
                 };
                 setProduct(mappedProduct);
                 setQuantity(1);
@@ -313,44 +311,52 @@ export default function ProductDetailPage() {
 
 
 
-    const ProductInfo = () => (
-        <>
-            { }
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">{product.name}</h1>
+    const ProductInfo = () => {
+        const approvedComments = product.comments?.filter((c: ProductComment) => c.isApproved) || [];
+        const totalReviews = approvedComments.length;
+        const avgRating = totalReviews > 0
+            ? approvedComments.reduce((sum: number, c: ProductComment) => sum + c.rating, 0) / totalReviews
+            : 0;
 
-            { }
-            <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+        return (
+            <>
+                { }
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">{product.name}</h1>
 
-            { }
-            <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                        <MdOutlineStar
-                            key={i}
-                            className={`w-4 h-4 ${i < (product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
-                        />
-                    ))}
+                { }
+                <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+
+                { }
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                            <MdOutlineStar
+                                key={i}
+                                className={`w-4 h-4 ${i < Math.round(avgRating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                            />
+                        ))}
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">
+                        {totalReviews} Yorum
+                    </span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">
-                    {(product.reviews || 0).toLocaleString('tr-TR')} Yorum
-                </span>
-            </div>
-            { }
-            {product.tags && product.tags.length > 0 && (
-                <div className="flex gap-2 mb-6">
-                    {product.tags.map((tag, index) => (
-                        <span
-                            key={index}
-                            className="px-4 py-1.5 text-xs font-medium bg-gray-100 rounded-full text-gray-700"
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-            )}
+                { }
+                {product.tags && product.tags.length > 0 && (
+                    <div className="flex gap-2 mb-6">
+                        {product.tags.map((tag, index) => (
+                            <span
+                                key={index}
+                                className="px-4 py-1.5 text-xs font-medium bg-gray-100 rounded-full text-gray-700"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
-        </>
-    );
+            </>
+        );
+    };
 
     const AromaSelection = () => (
         product.aromas && product.aromas.length > 0 && (
@@ -702,28 +708,47 @@ export default function ProductDetailPage() {
                 <div className="flex flex-col md:flex-row gap-8 mb-8">
                     { }
                     <div className="flex flex-col items-center">
-                        <div className="text-4xl font-bold text-gray-900">buraya yorum toplam yorum puani gelecek</div>
-                        <div className="flex items-center gap-1 my-2">
-                            {[...Array(5)].map((_, i) => (
-                                <MdOutlineStar key={i} className="w-6 h-6 text-yellow-400" />
-                            ))}
-                        </div>
-                        <div className="text-sm text-gray-600 mb-6">{product?.reviews?.toLocaleString('tr-TR') || 'toplam yorum sayisi gelcek'} YORUM</div>
-                        <button
-                            className="text-white text-sm font-medium px-6 py-2.5 rounded-full transition-all hover:opacity-90"
-                            style={{ background: 'linear-gradient(135deg, #1F23AA 0%, #387EC7 100%)' }}
-                        >
-                            YORUM ({product?.reviews?.toLocaleString('tr-TR') || 'toplam yorum sayisi gelcek'})
-                        </button>
+                        {(() => {
+                            const approvedComments = product.comments?.filter((c: ProductComment) => c.isApproved) || [];
+                            const totalReviews = approvedComments.length;
+                            const avgRating = totalReviews > 0
+                                ? approvedComments.reduce((sum: number, c: ProductComment) => sum + c.rating, 0) / totalReviews
+                                : 0;
+
+                            return (
+                                <>
+                                    <div className="text-4xl font-bold text-gray-900">{avgRating.toFixed(1)}</div>
+                                    <div className="flex items-center gap-1 my-2">
+                                        {[...Array(5)].map((_, i) => (
+                                            <MdOutlineStar
+                                                key={i}
+                                                className={`w-6 h-6 ${
+                                                    i < Math.round(avgRating) ? 'text-yellow-400' : 'text-gray-300'
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className="text-sm text-gray-600 mb-6">
+                                        {totalReviews} YORUM
+                                    </div>
+                                    <button
+                                        className="text-white text-sm font-medium px-6 py-2.5 rounded-full transition-all hover:opacity-90"
+                                        style={{ background: 'linear-gradient(135deg, #1F23AA 0%, #387EC7 100%)' }}
+                                    >
+                                        YORUM ({totalReviews})
+                                    </button>
+                                </>
+                            );
+                        })()}
                     </div>
 
                     { }
                     <div className="flex-1 space-y-2">
                         {(() => {
-                            const reviews = product.comments || [];
-                            const totalReviews = reviews.length;
+                            const approvedComments = product.comments?.filter((c: ProductComment) => c.isApproved) || [];
+                            const totalReviews = approvedComments.length;
                             const ratingCounts = [0, 0, 0, 0, 0];
-                            reviews.forEach((r: ProductComment) => {
+                            approvedComments.forEach((r: ProductComment) => {
                                 if (r.rating >= 1 && r.rating <= 5) {
                                     ratingCounts[r.rating - 1]++;
                                 }
@@ -754,45 +779,79 @@ export default function ProductDetailPage() {
 
                 { }
                 <div className="space-y-4 mb-8">
-                    {(product.comments && product.comments.length > 0) ? (
-                        product.comments.map((review: ProductComment, index: number) => (
-                            <div
-                                key={index}
-                                className={`bg-[#F7F7F7] px-6 py-8 rounded-[30px] ${index >= 3 ? 'hidden md:block' : ''}`}
-                            >
-                                { }
-                                <div className="md:hidden">
-                                    <div className="flex items-center gap-0.5 mb-2">
-                                        {[...Array(5)].map((_, i) => (
-                                            <MdOutlineStar
-                                                key={i}
-                                                className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className="mb-2">
-                                        <span className="font-bold text-gray-900 text-sm block">{review.userName}</span>
-                                        <span className="font-bold text-gray-900 text-sm">{new Date(review.createdAt).toLocaleDateString('tr-TR')}</span>
-                                    </div>
-                                </div>
+                    {(() => {
+                        // Sadece onaylanmış yorumları al ve en yeniden en eskiye sırala
+                        const approvedComments = product.comments
+                            ?.filter((c: ProductComment) => c.isApproved)
+                            .sort((a: ProductComment, b: ProductComment) => {
+                                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                            }) || [];
 
-                                { }
-                                <div className="hidden md:flex items-center justify-between mb-2">
-                                    <div className="flex items-center gap-2">
+                        return approvedComments.length > 0 ? (
+                            approvedComments.map((review: ProductComment, index: number) => (
+                                <div
+                                    key={review.id || index}
+                                    className={`bg-[#F7F7F7] px-6 py-8 rounded-[30px] ${index >= 3 ? 'hidden md:block' : ''}`}
+                                >
+                                    { }
+                                    <div className="md:hidden">
                                         <div className="flex items-center gap-0.5">
-                                            {[...Array(5)].map((_, i) => (
+                                            {/* Dolu yıldızlar */}
+                                            {[...Array(review.rating)].map((_, i) => (
                                                 <MdOutlineStar
-                                                    key={i}
-                                                    className={`w-5 h-5 ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                    key={`filled-${i}`}
+                                                    className="w-5 h-5 text-yellow-400"
+                                                />
+                                            ))}
+                                            {/* Boş yıldızlar */}
+                                            {[...Array(5 - review.rating)].map((_, i) => (
+                                                <MdOutlineStar
+                                                    key={`empty-${i}`}
+                                                    className="w-5 h-5 text-gray-300"
                                                 />
                                             ))}
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">{review.userName}</span>
+                                        <div className="mb-2">
+                                            <span className="font-bold text-gray-900 text-sm block">
+                                                {review.user?.firstName} {review.user?.lastName?.charAt(0)}.
+                                            </span>
+                                            <span className="font-bold text-gray-900 text-sm">
+                                                {new Date(review.createdAt).toLocaleDateString('tr-TR')}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <span className="text-gray-900 text-sm font-bold">{new Date(review.createdAt).toLocaleDateString('tr-TR')}</span>
-                                </div>
 
-                                <h4 className="font-bold text-gray-900 mb-1">{review.title}</h4>
+                                    { }
+                                    <div className="hidden md:flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-0.5">
+                                                {/* Dolu yıldızlar */}
+                                                {[...Array(review.rating)].map((_, i) => (
+                                                    <MdOutlineStar
+                                                        key={`filled-${i}`}
+                                                        className="w-5 h-5 text-yellow-400"
+                                                    />
+                                                ))}
+                                                {/* Boş yıldızlar */}
+                                                {[...Array(5 - review.rating)].map((_, i) => (
+                                                    <MdOutlineStar
+                                                        key={`empty-${i}`}
+                                                        className="w-5 h-5 text-gray-300"
+                                                    />
+                                                ))}
+                                            </div>
+                                            <span className="text-sm font-bold text-gray-900">
+                                                {review.user?.firstName} {review.user?.lastName?.charAt(0)}.
+                                            </span>
+                                        </div>
+                                        <span className="text-gray-900 text-sm font-bold">
+                                            {new Date(review.createdAt).toLocaleDateString('tr-TR')}
+                                        </span>
+                                    </div>
+
+                                {review.title && (
+                                    <h4 className="font-bold text-gray-900 mb-1">{review.title}</h4>
+                                )}
                                 <p className="text-sm text-gray-600">{review.comment}</p>
                             </div>
                         ))
@@ -800,7 +859,8 @@ export default function ProductDetailPage() {
                         <div className="bg-[#F7F7F7] px-6 py-8 rounded-[30px] text-center">
                             <p className="text-gray-600">Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
                         </div>
-                    )}
+                    );
+                    })()}
                 </div>
 
                 { }

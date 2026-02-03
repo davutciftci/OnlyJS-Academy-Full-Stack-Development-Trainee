@@ -20,7 +20,16 @@ const router = Router();
 
 router.get('/approved', async (req, res, next) => {
     try {
-        const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+        const page = req.query.page ? parseInt(req.query.page as string) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+        const skip = (page - 1) * limit;
+
+        // Toplam yorum sayısını al
+        const totalComments = await import('../utils/prisma').then(m => m.default.productComment.count({
+            where: { isApproved: true },
+        }));
+
+        // Sayfalanmış yorumları al
         const comments = await import('../utils/prisma').then(m => m.default.productComment.findMany({
             where: { isApproved: true },
             include: {
@@ -40,6 +49,7 @@ router.get('/approved', async (req, res, next) => {
                 },
             },
             orderBy: { createdAt: 'desc' },
+            skip,
             take: limit,
         }));
 
@@ -47,6 +57,12 @@ router.get('/approved', async (req, res, next) => {
             status: 'success',
             results: comments.length,
             data: comments,
+            pagination: {
+                page,
+                limit,
+                totalComments,
+                totalPages: Math.ceil(totalComments / limit),
+            },
         });
     } catch (error) {
         next(error);

@@ -83,9 +83,12 @@ export const getCommentById = async (id: number) => {
 
 export const createComment = async (
     data: {
+        title?: string;
         rating: number;
         comment: string;
         productId: number;
+        orderId?: number;
+        orderItemId?: number;
     },
     userId: number
 ) => {
@@ -101,6 +104,33 @@ export const createComment = async (
         throw new BadRequestError('Pasif bir ürüne yorum yapılamaz');
     }
 
+    // Kullanıcının bu ürünü satın alıp almadığını kontrol et
+    const deliveredOrder = await prisma.order.findFirst({
+        where: {
+            userId,
+            status: 'DELIVERED',
+            items: {
+                some: {
+                    productId: data.productId,
+                },
+            },
+        },
+        include: {
+            items: {
+                where: {
+                    productId: data.productId,
+                },
+                select: {
+                    id: true,
+                },
+            },
+        },
+    });
+
+    if (!deliveredOrder) {
+        throw new BadRequestError('Bu ürün için yorum yapabilmek için önce satın almanız ve siparişinizin teslim edilmesi gerekmektedir.');
+    }
+
     const existingComment = await prisma.productComment.findFirst({
         where: {
             userId,
@@ -112,12 +142,18 @@ export const createComment = async (
         throw new BadRequestError('Bu ürüne zaten yorum yaptınız. Yorumunuzu güncelleyebilirsiniz.');
     }
 
+    const orderId = data.orderId || deliveredOrder.id;
+    const orderItemId = data.orderItemId || deliveredOrder.items[0]?.id;
+
     const comment = await prisma.productComment.create({
         data: {
+            title: data.title,
             rating: data.rating,
             comment: data.comment,
             productId: data.productId,
             userId,
+            orderId,
+            orderItemId,
             isApproved: false,
         },
         include: {
@@ -144,6 +180,7 @@ export const createComment = async (
 export const updateComment = async (
     id: number,
     data: {
+        title?: string;
         rating?: number;
         comment?: string;
     },

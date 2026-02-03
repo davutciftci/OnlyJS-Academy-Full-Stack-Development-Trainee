@@ -20,6 +20,8 @@ export const getDashboardStats = async () => {
         totalUsers,
         totalProducts,
         totalOrders,
+        totalCategories,
+        totalComments,
         pendingOrders,
         totalRevenue,
         todayOrders,
@@ -31,6 +33,10 @@ export const getDashboardStats = async () => {
         prisma.product.count({ where: { isActive: true } }),
 
         prisma.order.count(),
+
+        prisma.category.count(),
+
+        prisma.productComment.count(),
 
         prisma.order.count({ where: { status: OrderStatus.PENDING } }),
 
@@ -84,6 +90,12 @@ export const getDashboardStats = async () => {
         products: {
             total: totalProducts,
             lowStock: lowStockProducts,
+        },
+        categories: {
+            total: totalCategories,
+        },
+        comments: {
+            total: totalComments,
         },
         orders: {
             total: totalOrders,
@@ -159,7 +171,6 @@ export const getLast7DaysSales = async () => {
         });
     }
 
-    console.log('[AdminStatsService] Last 7 days sales calculated');
     return last7Days;
 };
 

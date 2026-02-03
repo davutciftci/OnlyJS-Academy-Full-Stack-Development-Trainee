@@ -4,7 +4,6 @@ import { Request } from "express";
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb) => {
-        console.log(`[Multer] Destination called for file:`, file.originalname);
         cb(null, "uploads/");
     },
 
@@ -20,22 +19,17 @@ const storage = multer.diskStorage({
             .toLowerCase();
 
         const filename = `${sanitizedName}-${uniqueSuffix}${ext}`;
-
-        console.log(`[Multer] Generated filename:`, filename);
         cb(null, filename);
     },
 
 });
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    console.log('[Multer] File filter called for:', file.originalname, 'mimetype:', file.mimetype);
-
     const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
 
     if (allowedMimeTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        console.log('[Multer] file rejected:', file.originalname);
         cb(new Error("Sadece resim dosyaları yüklenebilir (jpg, jpeg, png, gif, webp)"));
     }
 };

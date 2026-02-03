@@ -92,7 +92,15 @@ export const searchAndFilterProducts = async (filters: ProductFilters = {}) => {
                     size: true,
                     servings: true,
                 }
-            }
+            },
+            comments: {
+                where: {
+                    isApproved: true,
+                },
+                select: {
+                    id: true,
+                },
+            },
         },
         orderBy,
     });
@@ -184,6 +192,14 @@ export const getPaginatedProducts = async (filters: ProductFilters, page: number
                     servings: true,
                 },
             },
+            comments: {
+                where: {
+                    isApproved: true,
+                },
+                select: {
+                    id: true,
+                },
+            },
         },
         orderBy,
         skip,
@@ -200,7 +216,7 @@ export const getPaginatedProducts = async (filters: ProductFilters, page: number
             hasNextPage: page < totalPages,
             hasPreviousPage: page > 1,
         }
-    }
+    };
 }
 
 
@@ -252,6 +268,23 @@ export const getProductBySlugService = async (slug: string) => {
                 }
             },
             photos: true,
+            comments: {
+                where: {
+                    isApproved: true,
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                }
+            },
         },
     });
 

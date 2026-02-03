@@ -33,8 +33,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const uploadsPath = path.join(process.cwd(), "uploads");
-console.log('[Server] CWD:', process.cwd());
-console.log('[Server] Static files served from:', uploadsPath);
 app.use('/uploads', express.static(uploadsPath));
 
 app.use('/api/user', userRouter);

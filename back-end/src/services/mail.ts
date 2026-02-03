@@ -92,5 +92,4 @@ export const sendContactFormEmail = async (firstName: string, lastName: string, 
         `Yeni İletişim Mesajı - ${firstName} ${lastName}`,
         contactFormEmail(firstName, lastName, email, message)
     );
-    console.log('[EmailService] Contact form email sent successfully');
 }

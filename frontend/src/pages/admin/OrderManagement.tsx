@@ -75,7 +75,7 @@ export default function OrderManagement() {
 
             <div className="bg-white rounded-lg shadow mb-6 p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Search */}
+                    
                     <div>
                         <input
                             type="text"
@@ -86,7 +86,7 @@ export default function OrderManagement() {
                         />
                     </div>
 
-                    {/* Status Filter */}
+                    
                     <div>
                         <div className="relative">
                             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -180,7 +180,7 @@ export default function OrderManagement() {
                 )}
             </div>
 
-            {/* Order Detail Modal */}
+            
             {selectedOrder && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -195,7 +195,7 @@ export default function OrderManagement() {
                                 </button>
                             </div>
 
-                            {/* Order Info */}
+                            
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
                                     <p className="text-sm text-gray-500">Sipariş No</p>
@@ -219,7 +219,7 @@ export default function OrderManagement() {
                                 </div>
                             </div>
 
-                            {/* Shipping Address */}
+                            
                             <div className="mb-6">
                                 <h3 className="font-semibold mb-2">Teslimat Adresi</h3>
                                 <div className="bg-gray-50 p-4 rounded">
@@ -237,7 +237,7 @@ export default function OrderManagement() {
                                 </div>
                             </div>
 
-                            {/* Order Items */}
+                            
                             <div className="mb-6">
                                 <h3 className="font-semibold mb-2">Ürünler</h3>
                                 <div className="border rounded">
@@ -259,7 +259,7 @@ export default function OrderManagement() {
                                 </div>
                             </div>
 
-                            {/* Price Summary */}
+                            
                             <div className="border-t pt-4">
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Ara Toplam</span>

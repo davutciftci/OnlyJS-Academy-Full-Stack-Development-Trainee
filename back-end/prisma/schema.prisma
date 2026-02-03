@@ -120,6 +120,7 @@ model ProductPhoto {
 
 model ProductComment {
   id          Int        @id @default(autoincrement())
+  title       String?    @db.VarChar(100)
   rating      Int
   comment     String     @db.Text
   isApproved  Boolean    @default(false) @map("is_approved")

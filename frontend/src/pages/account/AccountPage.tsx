@@ -282,6 +282,37 @@ export default function AccountPage() {
         }
     };
 
+    const handleEditComment = (comment: ProductComment) => {
+        setEditingComment(comment);
+        setReviewModalOpen(true);
+    };
+
+    const handleDeleteComment = async (commentId: number) => {
+        if (!window.confirm('Bu yorumu silmek istediğinize emin misiniz?')) {
+            return;
+        }
+
+        try {
+            await apiClient.delete(`/comments/${commentId}`);
+            const response = await apiClient.get('/comments/my');
+            setComments(response.data.data || []);
+            alert('Yorum başarıyla silindi');
+        } catch (error) {
+            console.error('Yorum silinemedi:', error);
+            alert('Yorum silinirken bir hata oluştu');
+        }
+    };
+
+    const handleCommentSuccess = async () => {
+        try {
+            const response = await apiClient.get('/comments/my');
+            setComments(response.data.data || []);
+        } catch (error) {
+            console.error('Yorumlar yüklenemedi:', error);
+        }
+        setEditingComment(null);
+    };
+
     return (
         <div className="min-h-screen bg-white py-12">
             <div className="container-custom">
@@ -327,6 +358,16 @@ export default function AccountPage() {
                             >
                                 <CiLocationOn className="w-5 h-5" />
                                 <span className="font-medium">Adreslerim</span>
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('comments')}
+                                className={`flex-shrink-0 md:w-full flex items-center gap-2 px-2 md:px-4 py-2 md:py-3 rounded-lg transition-colors border whitespace-nowrap text-sm ${activeTab === 'comments'
+                                    ? 'bg-black text-white border-black'
+                                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-200'
+                                    }`}
+                            >
+                                <MessageSquare className="w-5 h-5" />
+                                <span className="font-medium">Yorumlarım</span>
                             </button>
                             <button
                                 onClick={() => setActiveTab('password')}
@@ -933,9 +974,120 @@ export default function AccountPage() {
                                 </form>
                             </div>
                         )}
+
+                        {activeTab === 'comments' && (
+                            <div className="px-4 md:px-8 py-4">
+                                <h2 className="text-xl font-bold mb-6">Yorumlarım ({comments.length})</h2>
+                                {loadingComments ? (
+                                    <div className="flex justify-center items-center py-12">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                                    </div>
+                                ) : comments.length === 0 ? (
+                                    <div className="text-center py-12">
+                                        <p className="text-gray-500 mb-4">Henüz yorum yapmadınız.</p>
+                                        <Link
+                                            to="/urunler"
+                                            className="inline-block px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                                        >
+                                            Ürünlere Göz Atın
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {comments.map((comment) => (
+                                            <div key={comment.id} className="border border-gray-200 rounded-lg p-6">
+                                                {/* Ürün Bilgisi */}
+                                                <div className="flex items-start gap-4 mb-4 pb-4 border-b border-gray-200">
+                                                    {comment.product?.photos?.[0]?.url && (
+                                                        <img
+                                                            src={`http://localhost:3000${comment.product.photos[0].url}`}
+                                                            alt={comment.product.name}
+                                                            className="w-16 h-16 object-cover rounded-lg"
+                                                        />
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <Link
+                                                            to={`/urun/${comment.product?.slug}`}
+                                                            className="font-bold text-gray-900 hover:underline"
+                                                        >
+                                                            {comment.product?.name}
+                                                        </Link>
+                                                        <p className="text-sm text-gray-500 mt-1">
+                                                            {new Date(comment.createdAt).toLocaleDateString('tr-TR')}
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    {comment.isApproved ? (
+                                                        <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
+                                                            Onaylandı
+                                                        </span>
+                                                    ) : (
+                                                        <span className="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full font-medium">
+                                                            Beklemede
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                
+                                                <div className="flex items-center gap-1 mb-2">
+                                                    {[...Array(comment.rating)].map((_, i) => (
+                                                        <Star key={`filled-${i}`} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                                    ))}
+                                                    {[...Array(5 - comment.rating)].map((_, i) => (
+                                                        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
+                                                    ))}
+                                                </div>
+
+                                                
+                                                {comment.title && (
+                                                    <h4 className="font-bold text-gray-900 mb-2">{comment.title}</h4>
+                                                )}
+
+                                                
+                                                <p className="text-sm text-gray-600 mb-4">{comment.comment}</p>
+
+                                                
+                                                <div className="flex gap-3 pt-4 border-t border-gray-200">
+                                                    <button
+                                                        onClick={() => handleEditComment(comment)}
+                                                        className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                        Düzenle
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteComment(comment.id)}
+                                                        className="flex items-center gap-2 px-4 py-2 border border-red-300 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                        Sil
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+
+            
+            {editingComment && (
+                <ReviewModal
+                    isOpen={reviewModalOpen}
+                    onClose={() => {
+                        setReviewModalOpen(false);
+                        setEditingComment(null);
+                    }}
+                    productId={editingComment.productId}
+                    productName={editingComment.product?.name || ''}
+                    onSuccess={handleCommentSuccess}
+                    editMode={true}
+                    existingComment={editingComment}
+                />
+            )}
         </div>
     );
 }

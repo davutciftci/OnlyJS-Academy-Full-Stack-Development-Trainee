@@ -121,6 +121,7 @@ export interface ProductPaginationParams extends ProductSearchParams {
 }
 
 export interface CreateCommentRequest {
+    title?: string;
     rating: number;
     comment: string;
     productId: number;

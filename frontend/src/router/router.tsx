@@ -1,34 +1,44 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { lazy } from 'react';
 import Layout from '../components/layout/Layout';
 import AuthLayout from '../components/layout/AuthLayout';
 import AccountLayout from '../components/layout/AccountLayout';
 import CheckoutLayout from '../components/layout/CheckoutLayout';
 import AdminLayout from '../components/layout/AdminLayout';
+
+// Critical pages - load immediately
 import HomePage from '../pages/home/HomePage';
-import ProductDetailPage from '../pages/products/ProductDetailPage';
 import AllProductsPage from '../pages/products/AllProductsPage';
-import ContactPage from '../pages/contact/ContactPage';
-import ReviewsPage from '../pages/reviews/ReviewsPage';
-import FAQPage from '../pages/faq/FAQPage';
-import BlogPage from '../pages/blog/BlogPage';
-import LoginPage from '../pages/auth/LoginPage';
-import RegisterPage from '../pages/auth/RegisterPage';
-import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage';
-import ResetPasswordPage from '../pages/auth/ResetPasswordPage';
-import AccountPage from '../pages/account/AccountPage';
-import OrderDetailPage from '../pages/orders/OrderDetailPage';
-import OrderSuccessPage from '../pages/orders/OrderSuccessPage';
-import AboutPage from '../pages/about/AboutPage';
-import SalesAgreementPage from '../pages/policies/SalesAgreementPage';
-import RefundPolicyPage from '../pages/policies/RefundPolicyPage';
-import WorkPrinciplesPage from '../pages/policies/WorkPrinciplesPage';
-import KVKKPage from '../pages/policies/KVKKPage';
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import ProductManagement from '../pages/admin/ProductManagement';
-import CategoryManagement from '../pages/admin/CategoryManagement';
-import ProductCreatePage from '../pages/admin/ProductCreatePage';
-import ProductEditPage from '../pages/admin/ProductEditPage';
-import OrderManagement from '../pages/admin/OrderManagement';
+
+// Lazy load heavy pages
+const ProductDetailPage = lazy(() => import('../pages/products/ProductDetailPage'));
+const ContactPage = lazy(() => import('../pages/contact/ContactPage'));
+const ReviewsPage = lazy(() => import('../pages/reviews/ReviewsPage'));
+const FAQPage = lazy(() => import('../pages/faq/FAQPage'));
+const BlogPage = lazy(() => import('../pages/blog/BlogPage'));
+const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPasswordPage'));
+const AccountPage = lazy(() => import('../pages/account/AccountPage'));
+const OrderDetailPage = lazy(() => import('../pages/orders/OrderDetailPage'));
+const OrderSuccessPage = lazy(() => import('../pages/orders/OrderSuccessPage'));
+const AboutPage = lazy(() => import('../pages/about/AboutPage'));
+const SalesAgreementPage = lazy(() => import('../pages/policies/SalesAgreementPage'));
+const RefundPolicyPage = lazy(() => import('../pages/policies/RefundPolicyPage'));
+const WorkPrinciplesPage = lazy(() => import('../pages/policies/WorkPrinciplesPage'));
+const KVKKPage = lazy(() => import('../pages/policies/KVKKPage'));
+
+// Admin pages - lazy load (heavy components)
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const ProductManagement = lazy(() => import('../pages/admin/ProductManagement'));
+const CategoryManagement = lazy(() => import('../pages/admin/CategoryManagement'));
+const ProductCreatePage = lazy(() => import('../pages/admin/ProductCreatePage'));
+const ProductEditPage = lazy(() => import('../pages/admin/ProductEditPage'));
+const OrderManagement = lazy(() => import('../pages/admin/OrderManagement'));
+const CommentManagement = lazy(() => import('../pages/admin/CommentManagement'));
+const ShippingManagement = lazy(() => import('../pages/admin/ShippingManagement'));
+
 
 export const router = createBrowserRouter([
     {
@@ -180,6 +190,14 @@ export const router = createBrowserRouter([
             {
                 path: 'orders',
                 element: <OrderManagement />,
+            },
+            {
+                path: 'comments',
+                element: <CommentManagement />,
+            },
+            {
+                path: 'shipping',
+                element: <ShippingManagement />,
             },
         ]
     }

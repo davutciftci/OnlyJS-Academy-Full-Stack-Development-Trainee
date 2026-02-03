@@ -135,7 +135,6 @@ export default function ProductCreatePage() {
 
         setIsLoading(true);
         try {
-            // Upload fotoğraflar
             const uploadedPhotos = await Promise.all(
                 photos.map(async (photo, index) => {
                     if (photo.file) {
@@ -151,7 +150,6 @@ export default function ProductCreatePage() {
                 })
             );
 
-            // Null olmayan fotoğrafları filtrele
             const validPhotos = uploadedPhotos.filter(p => p !== null) as Array<{
                 url: string;
                 altText?: string;
@@ -171,15 +169,15 @@ export default function ProductCreatePage() {
 
             await adminService.createProduct({
                 ...formData,
-                stockCount: 0, // Stok varyantlarda tutulacak
+                stockCount: 0,
                 basePrice: formData.basePrice || undefined,
                 expirationDate: formData.expirationDate || undefined,
                 servingSize: formData.servingSize || undefined,
                 ingredients: formData.ingredients || undefined,
                 nutritionValues: nutritionValuesData,
                 aminoAcids: aminoAcidsData,
-                variants: variants, // Varyantları ekle
-                photos: validPhotos.length > 0 ? validPhotos : undefined, // Fotoğrafları ekle
+                variants: variants,
+                photos: validPhotos.length > 0 ? validPhotos : undefined,
             });
 
             alert('Ürün başarıyla oluşturuldu!');
@@ -187,7 +185,6 @@ export default function ProductCreatePage() {
         } catch (error: any) {
             console.error('Ürün oluşturulamadı:', error);
 
-            // Backend'den gelen validasyon hatalarını parse et
             if (error.response?.data?.errors) {
                 const validationErrors = error.response.data.errors;
                 const errorMessages = validationErrors.map((err: any) => {
@@ -245,7 +242,6 @@ export default function ProductCreatePage() {
         setVariants(variants.filter((_, i) => i !== index));
     };
 
-    // Photo functions
     const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files) return;
@@ -284,7 +280,6 @@ export default function ProductCreatePage() {
         setPhotos(photos.filter((_, i) => i !== index));
     };
 
-    // Nutrition functions
     const addNutritionValue = () => {
         setNutritionValues([...nutritionValues, { name: '', value: '', unit: 'g' }]);
     };
@@ -299,7 +294,6 @@ export default function ProductCreatePage() {
         setNutritionValues(nutritionValues.filter((_, i) => i !== index));
     };
 
-    // Amino Acid functions
     const addAminoAcid = () => {
         setAminoAcids([...aminoAcids, { name: '', value: '', unit: 'g' }]);
     };
@@ -314,7 +308,6 @@ export default function ProductCreatePage() {
         setAminoAcids(aminoAcids.filter((_, i) => i !== index));
     };
 
-    // List functions
     const addToList = (listName: 'features' | 'usage', value: string) => {
         if (!value.trim()) return;
         setFormData(prev => ({
@@ -359,7 +352,6 @@ export default function ProductCreatePage() {
                 </button>
             </div>
 
-            {/* Tabs */}
             <div className="bg-white rounded-lg shadow mb-6">
                 <div className="border-b border-gray-200">
                     <nav className="flex -mb-px">
@@ -385,7 +377,6 @@ export default function ProductCreatePage() {
                 </div>
 
                 <div className="p-6">
-                    {/* General Tab */}
                     {activeTab === 'general' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -499,7 +490,6 @@ export default function ProductCreatePage() {
                         </div>
                     )}
 
-                    {/* Variants Tab */}
                     {activeTab === 'variants' && (
                         <div>
                             <div className="flex justify-between items-center mb-4">
@@ -645,7 +635,6 @@ export default function ProductCreatePage() {
                         </div>
                     )}
 
-                    {/* Photos Tab */}
                     {activeTab === 'photos' && (
                         <div>
                             <div className="mb-6">
@@ -717,10 +706,8 @@ export default function ProductCreatePage() {
                         </div>
                     )}
 
-                    {/* Nutrition Tab */}
                     {activeTab === 'nutrition' && (
                         <div className="space-y-8">
-                            {/* Serving Size */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-900 mb-2">Servis Boyutu</label>
                                 <input
@@ -797,7 +784,6 @@ export default function ProductCreatePage() {
                                 )}
                             </div>
 
-                            {/* Amino Acids */}
                             <div>
                                 <div className="flex justify-between items-center mb-3">
                                     <div>
@@ -874,7 +860,6 @@ export default function ProductCreatePage() {
                                 )}
                             </div>
 
-                            {/* Ingredients */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-900 mb-2">İçindekiler</label>
                                 <textarea
@@ -888,10 +873,8 @@ export default function ProductCreatePage() {
                         </div>
                     )}
 
-                    {/* Details Tab */}
                     {activeTab === 'details' && (
                         <div className="space-y-6">
-                            {/* Features */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-900 mb-3">Özellikler</label>
                                 <div className="flex gap-2 mb-3">
@@ -925,7 +908,6 @@ export default function ProductCreatePage() {
                                 </div>
                             </div>
 
-                            {/* Usage */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-900 mb-3">Kullanım Şekli</label>
                                 <div className="flex gap-2 mb-3">
@@ -964,7 +946,6 @@ export default function ProductCreatePage() {
                 </div>
             </div>
 
-            {/* Bottom Actions */}
             <div className="flex gap-3">
                 <button
                     onClick={handleSubmit}

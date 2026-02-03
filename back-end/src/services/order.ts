@@ -107,8 +107,28 @@ export const getOrderById = async (id: number) => {
                                     id: true,
                                     name: true,
                                     slug: true,
+                                    photos: {
+                                        select: {
+                                            url: true,
+                                            isPrimary: true,
+                                        },
+                                    },
+                                    category: {
+                                        select: {
+                                            slug: true,
+                                        },
+                                    },
                                 },
                             },
+                        },
+                    },
+                    productComments: {
+                        select: {
+                            id: true,
+                            rating: true,
+                            comment: true,
+                            userId: true,
+                            isApproved: true,
                         },
                     },
                 },
@@ -274,7 +294,7 @@ export const createOrder = async (
 
     const fullOrder = await getOrderById(order.id);
 
-    sendOrderConfirmationEmail(fullOrder as OrderWithRelations).catch(err => {
+    sendOrderConfirmationEmail(fullOrder as unknown as OrderWithRelations).catch(err => {
         console.error('[OrderService] Order confirmation email failed:', err);
     });
 
@@ -313,7 +333,6 @@ export const updateOrderStatus = async (
             updateData.cancelReason = cancelReason;
         }
 
-        console.log('[OrderService] Restoring stock for cancelled order');
         await prisma.$transaction(async (tx) => {
             for (const item of order.items) {
                 await tx.productVariant.update({
@@ -337,25 +356,25 @@ export const updateOrderStatus = async (
     const fullOrder = await getOrderById(orderId);
 
     if (status === OrderStatus.CONFIRMED) {
-        sendOrderConfirmedEmail(fullOrder as OrderWithRelations).catch(err => {
+        sendOrderConfirmedEmail(fullOrder as unknown as OrderWithRelations).catch(err => {
             console.error('[OrderService] Failed to send order confirmed email: ', err);
         });
     }
 
     if (status === OrderStatus.SHIPPED) {
-        sendOrderShippedEmail(fullOrder as OrderWithRelations).catch(err => {
+        sendOrderShippedEmail(fullOrder as unknown as OrderWithRelations).catch(err => {
             console.error('[OrderService] Failed to send order shipped email: ', err);
         });
     }
 
     if (status === OrderStatus.DELIVERED) {
-        sendOrderDeliveredEmail(fullOrder as OrderWithRelations).catch(err => {
+        sendOrderDeliveredEmail(fullOrder as unknown as OrderWithRelations).catch(err => {
             console.error('[OrderService] Failed to send order delivered email: ', err);
         });
     }
 
     if (status === OrderStatus.CANCELLED) {
-        sendOrderCancelledEmail(fullOrder as OrderWithRelations).catch(err => {
+        sendOrderCancelledEmail(fullOrder as unknown as OrderWithRelations).catch(err => {
             console.error('[OrderService] Failed to send order cancelled email: ', err);
         });
     }

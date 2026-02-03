@@ -15,7 +15,6 @@ export const AROMAS = [
     { name: 'Blueberry', color: '#5B4B8A' },
 ];
 
-// Size options for product variants
 export const SIZES = [
     '200g',
     '400g',
@@ -33,7 +32,6 @@ export const SIZES = [
     '6kg',
 ];
 
-// Helper function to get aroma color by name
 export const getAromaColor = (aromaName: string): string => {
     const aroma = AROMAS.find(a => a.name.toLowerCase() === aromaName?.toLowerCase());
     return aroma?.color || '#000000';

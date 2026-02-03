@@ -1,9 +1,16 @@
 import { Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
 import Navbar from './Navbar';
 import { useCart } from '../../context/CartContext';
 import CartSidepanel from '../cart/CartSidepanel';
 import ScrollToTop from '../ScrollToTop';
 import ScrollToTopButton from '../ScrollToTopButton';
+
+const PageLoader = () => (
+    <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+    </div>
+);
 
 export default function AuthLayout() {
     const { showAlert } = useCart();
@@ -20,7 +27,9 @@ export default function AuthLayout() {
             <div className="min-h-screen flex flex-col bg-white">
                 <Navbar />
                 <main className="flex-1">
-                    <Outlet />
+                    <Suspense fallback={<PageLoader />}>
+                        <Outlet />
+                    </Suspense>
                 </main>
             </div>
             <CartSidepanel />

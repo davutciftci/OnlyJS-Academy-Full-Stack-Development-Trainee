@@ -10,7 +10,6 @@ import { AuthenticatedRequest } from 'src/middlewares/auth';
 import { asyncHandler } from '../utils/asyncHandler';
 
 
-// Helper function to calculate discounted price
 const calculateDiscountedPrice = (price: number, discount?: number | null): number => {
     if (!discount || discount <= 0) {
         return price;

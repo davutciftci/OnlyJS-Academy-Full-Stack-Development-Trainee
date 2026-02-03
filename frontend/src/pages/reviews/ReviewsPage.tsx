@@ -1,5 +1,6 @@
 ﻿import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { apiClient } from '../../api/client';
 import type { ProductComment } from '../../types';
 
 const ReviewsPage = () => {
@@ -9,9 +10,8 @@ const ReviewsPage = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                // Tüm ürünlerin yorumlarını çekmek için backend'e endpoint eklenmeli
-                // Şimdilik boş array
-                setReviews([]);
+                const response = await apiClient.get('/comments/approved');
+                setReviews(response.data.data);
             } catch (error) {
                 console.error('Yorumlar yüklenemedi:', error);
             } finally {
@@ -96,14 +96,23 @@ const ReviewsPage = () => {
                         {reviews.map((review) => (
                             <div key={review.id} className="flex flex-col gap-2">
                                 <div className="flex items-center gap-1 mb-1">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                                    {/* Dolu yıldızlar */}
+                                    {[...Array(review.rating)].map((_, i) => (
+                                        <Star key={`filled-${i}`} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                    ))}
+                                    {/* Boş yıldızlar */}
+                                    {[...Array(5 - review.rating)].map((_, i) => (
+                                        <Star key={`empty-${i}`} className="w-3 h-3 text-gray-300" />
                                     ))}
                                 </div>
                                 <span className="text-[10px] text-gray-400 font-medium">
                                     {new Date(review.createdAt || '').toLocaleDateString('tr-TR')}
                                 </span>
-                                <h3 className="font-black text-sm uppercase">KULLANICI YORUMU</h3>
+                                {review.title ? (
+                                    <h3 className="font-black text-sm uppercase">{review.title}</h3>
+                                ) : (
+                                    <h3 className="font-black text-sm uppercase">KULLANICI YORUMU</h3>
+                                )}
                                 <p className="text-xs text-gray-500 leading-relaxed font-medium">
                                     {review.comment}
                                 </p>

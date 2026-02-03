@@ -40,12 +40,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         ? Math.round(originalPrice * (1 - discount / 100))
                         : originalPrice;
 
+                    const BACKEND_BASE_URL = 'http://localhost:3000';
+                    const imageUrl = item.variant.product.photos?.[0]?.url 
+                        ? `${BACKEND_BASE_URL}${item.variant.product.photos[0].url}`
+                        : '/placeholder.png';
+
                     return {
                         id: item.variant.product.id,
                         name: item.variant.product.name,
                         description: item.variant.product.description || '',
                         price: finalPrice,
-                        image: item.variant.product.photos?.[0]?.url || '/placeholder.png',
+                        image: imageUrl,
                         quantity: item.quantity,
                         aroma: item.variant.aroma,
                         size: item.variant.size || item.variantId,
@@ -73,7 +78,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const addToCart = async (newItem: Omit<CartUIItem, 'quantity' | 'cartItemId'>, quantity: number = 1) => {
-        console.log('addToCart çağrıldı:', { newItem, quantity });
         try {
             const token = localStorage.getItem('authToken');
 
@@ -84,7 +88,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
 
             if (token) {
-                const response = await apiClient.post('/cart/items', {
+                await apiClient.post('/cart/items', {
                     variantId: newItem.variantId,
                     quantity
                 });

@@ -470,7 +470,7 @@ export default function CheckoutPage() {
                                     <div className="relative w-16 h-16 bg-white border border-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <Link to={`/urun/${item.categorySlug || 'urunler'}/${item.slug || item.id}`}>
                                             <img
-                                                src={`${import.meta.env.VITE_BACKEND_BASE_URL}${item.image}`}
+                                                src={item.image}
                                                 alt={item.name}
                                                 className="w-12 h-12 object-contain"
                                                 onError={(e) => {

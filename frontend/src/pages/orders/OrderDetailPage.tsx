@@ -3,13 +3,16 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { VscSettings } from 'react-icons/vsc';
 import { TfiPackage } from 'react-icons/tfi';
 import { CiLocationOn } from 'react-icons/ci';
+import { MessageSquare, Trash2, Edit2 } from 'lucide-react';
 import { apiClient } from '../../api/client';
+import ReviewModal from '../../components/ReviewModal';
 
 interface OrderItem {
     id: number; 
     quantity: number;
     price: number;
     subtotal: number;
+    productId: number;
     variant: {
         id: number;
         aroma: string;
@@ -24,6 +27,13 @@ interface OrderItem {
             };
         };
     };
+    productComments?: Array<{
+        id: number;
+        title?: string;
+        rating: number;
+        comment: string;
+        userId: number;
+    }>;
 }
 
 interface Order {
@@ -53,24 +63,69 @@ export default function OrderDetailPage() {
     const navigate = useNavigate();
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<{
+        productId: number;
+        productName: string;
+        orderItemId: number;
+    } | null>(null);
+    const [editingComment, setEditingComment] = useState<{
+        id: number;
+        title?: string;
+        rating: number;
+        comment: string;
+        productId: number;
+        productName: string;
+    } | null>(null);
 
     useEffect(() => {
-        const fetchOrder = async () => {
-            try {
-                const response = await apiClient.get(`/orders/${orderId}`);
-                setOrder(response.data.data);
-            } catch (error) {
-                console.error('Sipariş yüklenemedi:', error);
-                navigate('/hesabim?tab=orders');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (orderId) {
-            fetchOrder();
-        }
+        fetchOrder();
     }, [orderId, navigate]);
+
+    const fetchOrder = async () => {
+        try {
+            const response = await apiClient.get(`/orders/${orderId}`);
+            setOrder(response.data.data);
+        } catch (error) {
+            console.error('Sipariş yüklenemedi:', error);
+            navigate('/hesabim?tab=orders');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleReviewClick = (productId: number, productName: string, orderItemId: number) => {
+        setSelectedProduct({ productId, productName, orderItemId });
+        setReviewModalOpen(true);
+    };
+
+    const handleDeleteReview = async (commentId: number) => {
+        if (!confirm('Yorumunuzu silmek istediğinizden emin misiniz?')) return;
+
+        try {
+            await apiClient.delete(`/comments/${commentId}`);
+            fetchOrder();
+        } catch (error) {
+            console.error('Yorum silinemedi:', error);
+            alert('Yorum silinirken bir hata oluştu');
+        }
+    };
+
+    const handleEditReview = (comment: { id: number; title?: string; rating: number; comment: string }, productId: number, productName: string) => {
+        setEditingComment({
+            id: comment.id,
+            title: comment.title,
+            rating: comment.rating,
+            comment: comment.comment,
+            productId,
+            productName,
+        });
+        setReviewModalOpen(true);
+    };
+
+    const handleReviewSuccess = () => {
+        fetchOrder();
+    };
 
     if (loading) {
         return (
@@ -156,27 +211,75 @@ export default function OrderDetailPage() {
                             <div className="flex-1">
                                 <div className="border-b-2 border-t-2 border-gray-300 py-4">
                                     <div className="space-y-6">
-                                        {order.items.map((item) => (
-                                            <Link
-                                                key={item.id}
-                                                to={`/urun/${item.variant.product.category?.slug || 'urunler'}/${item.variant.product.slug || item.id}`}
-                                                className="flex gap-4 pb-6 last:border-0 hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2"
-                                            >
-                                                <div className="w-24 h-24 flex-shrink-0 p-2">
-                                                    <img
-                                                        src={getProductImage(item.variant.product.photos)}
-                                                        alt={item.variant.product.name}
-                                                        className="w-full h-full object-contain"
-                                                    />
+                                        {order.items.map((item) => {
+                                            const userComment = item.productComments?.find(c => c.userId === order.userId);
+                                            const canReview = order.status === 'DELIVERED' && !userComment;
+
+                                            return (
+                                                <div key={item.id} className="pb-6 border-b last:border-0">
+                                                    <Link
+                                                        to={`/urun/${item.variant.product.category?.slug || 'urunler'}/${item.variant.product.slug || item.id}`}
+                                                        className="flex gap-4 hover:bg-gray-50 transition-colors rounded-lg p-2 -m-2"
+                                                    >
+                                                        <div className="w-24 h-24 flex-shrink-0 p-2">
+                                                            <img
+                                                                src={getProductImage(item.variant.product.photos)}
+                                                                alt={item.variant.product.name}
+                                                                className="w-full h-full object-contain"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <h3 className="font-bold text-gray-900 mb-1">{item.variant.product.name} x {item.quantity}</h3>
+                                                            <p className="text-sm text-gray-900 font-semibold mb-1">{item.price.toLocaleString('tr-TR')} TL</p>
+                                                            <p className="text-sm text-gray-600">Aroma: {item.variant.aroma}</p>
+                                                            <p className="text-sm text-gray-600">Boyut: {item.variant.size}</p>
+                                                        </div>
+                                                    </Link>
+                                                    
+                                                    {canReview && (
+                                                        <button
+                                                            onClick={() => handleReviewClick(item.variant.product.id, item.variant.product.name, item.id)}
+                                                            className="mt-3 flex items-center gap-2 px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition-colors"
+                                                        >
+                                                            <MessageSquare className="w-4 h-4" />
+                                                            Yorum Yap
+                                                        </button>
+                                                    )}
+                                                    
+                                                    {userComment && (
+                                                        <div className="mt-3 bg-gray-50 p-4 rounded-lg">
+                                                            <div className="flex justify-between items-start mb-2">
+                                                                <div className="flex items-center gap-1">
+                                                                    {[...Array(5)].map((_, i) => (
+                                                                        <span key={i} className={`text-lg ${i < userComment.rating ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
+                                                                    ))}
+                                                                </div>
+                                                                <div className="flex gap-2">
+                                                                    <button
+                                                                        onClick={() => handleEditReview(userComment, item.variant.product.id, item.variant.product.name)}
+                                                                        className="text-gray-600 hover:text-gray-800 p-1"
+                                                                        title="Yorumu Düzenle"
+                                                                    >
+                                                                        <Edit2 className="w-4 h-4" />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleDeleteReview(userComment.id)}
+                                                                        className="text-red-600 hover:text-red-800 p-1"
+                                                                        title="Yorumu Sil"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            {userComment.title && (
+                                                                <h4 className="font-bold text-gray-900 text-sm mb-1">{userComment.title}</h4>
+                                                            )}
+                                                            <p className="text-sm text-gray-700">{userComment.comment}</p>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div className="flex-1">
-                                                    <h3 className="font-bold text-gray-900 mb-1">{item.variant.product.name} x {item.quantity}</h3>
-                                                    <p className="text-sm text-gray-900 font-semibold mb-1">{item.price.toLocaleString('tr-TR')} TL</p>
-                                                    <p className="text-sm text-gray-600">Aroma: {item.variant.aroma}</p>
-                                                    <p className="text-sm text-gray-600">Boyut: {item.variant.size}</p>
-                                                </div>
-                                            </Link>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
@@ -225,6 +328,34 @@ export default function OrderDetailPage() {
                     </div>
                 </div>
             </div>
+
+            {(selectedProduct || editingComment) && (
+                <ReviewModal
+                    isOpen={reviewModalOpen}
+                    onClose={() => {
+                        setReviewModalOpen(false);
+                        setSelectedProduct(null);
+                        setEditingComment(null);
+                    }}
+                    productId={editingComment ? editingComment.productId : selectedProduct!.productId}
+                    productName={editingComment ? editingComment.productName : selectedProduct!.productName}
+                    orderId={editingComment ? undefined : parseInt(orderId || '0')}
+                    orderItemId={editingComment ? undefined : selectedProduct!.orderItemId}
+                    onSuccess={handleReviewSuccess}
+                    editMode={!!editingComment}
+                    existingComment={editingComment ? {
+                        id: editingComment.id,
+                        title: editingComment.title,
+                        rating: editingComment.rating,
+                        comment: editingComment.comment,
+                        productId: editingComment.productId,
+                        userId: 0,
+                        isApproved: false,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                    } : undefined}
+                />
+            )}
         </div>
     );
 }

@@ -7,8 +7,6 @@ export const sendContactMessage = asyncHandler(async (req: Request, res: Respons
 
     await sendContactFormEmail(firstName, lastName, email, message);
 
-    console.log(`[Contact] Message sent successfully from ${email}`);
-
     return res.status(200).json({
         status: 'success',
         message: 'Mesajınız başarıyla gönderildi. En kısa sürede size dönüş yapacağız.'

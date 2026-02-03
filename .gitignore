@@ -1,12 +1,56 @@
-node_modules
-# Keep environment variables out of version control
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables
 .env
+.env.local
+.env.*.local
+**/.env
 
-/generated/prisma
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
 
+# Prisma generated files
+**/generated/
+
+# Uploads
 uploads/
+**/uploads/
+
+# Image files (uploaded by users)
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.webp
+*.svg
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock

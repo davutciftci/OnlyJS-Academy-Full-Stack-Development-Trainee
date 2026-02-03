@@ -39,6 +39,3 @@ export interface Review {
     comment: string;
     verified: boolean;
 }
-
-// Type definitions for use across the frontend
-// The actual product data comes from the backend API via productService

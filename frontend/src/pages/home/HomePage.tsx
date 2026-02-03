@@ -159,7 +159,7 @@ export default function HomePage() {
                                         className="group flex flex-col"
                                         style={{ order: index }}
                                     >
-                                        <div className="relative aspect-square rounded-sm mb-4 overflow-hidde">
+                                        <div className="relative aspect-square rounded-sm mb-4 overflow-hidden">
                                             <img
                                                 src={productImage}
                                                 alt={product.name}

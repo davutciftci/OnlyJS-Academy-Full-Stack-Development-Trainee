@@ -96,7 +96,6 @@ export const errorHandler = (
             });
         }
 
-        // Record not found
         if (err.code === 'P2025') {
             return res.status(404).json({
                 status: 'error',

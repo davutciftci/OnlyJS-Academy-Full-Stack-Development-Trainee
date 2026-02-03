@@ -99,7 +99,6 @@ export default function ProductEditPage() {
             const data = await productService.getProductById(productId);
             setProduct(data);
 
-            // Form verilerini ayarla
             setFormData({
                 name: data.name,
                 slug: data.slug,
@@ -115,7 +114,6 @@ export default function ProductEditPage() {
                 ingredients: data.ingredients || '',
             });
 
-            // Varyantları ayarla
             if (data.variants && data.variants.length > 0) {
                 setVariants(data.variants.map((v: any) => ({
                     id: v.id,
@@ -130,7 +128,6 @@ export default function ProductEditPage() {
                 })));
             }
 
-            // Besin değerlerini ayarla
             if (data.nutritionValues && typeof data.nutritionValues === 'object') {
                 const nv = data.nutritionValues;
                 if (nv.values && Array.isArray(nv.values)) {
@@ -141,7 +138,6 @@ export default function ProductEditPage() {
                 }
             }
 
-            // Amino asitleri ayarla
             if (data.aminoAcids && typeof data.aminoAcids === 'object') {
                 const aa = data.aminoAcids;
                 if (aa.values && Array.isArray(aa.values)) {
@@ -231,7 +227,6 @@ export default function ProductEditPage() {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    // Varyant işlemleri
     const addVariant = () => {
         setVariants([...variants, {
             name: '',
@@ -255,7 +250,6 @@ export default function ProductEditPage() {
         setVariants(variants.filter((_, i) => i !== index));
     };
 
-    // Besin değeri işlemleri
     const addNutritionValue = (name: string) => {
         if (!nutritionValues.find(n => n.name === name)) {
             setNutritionValues([...nutritionValues, { name, value: '', unit: 'g' }]);
@@ -272,7 +266,6 @@ export default function ProductEditPage() {
         setNutritionValues(nutritionValues.filter((_, i) => i !== index));
     };
 
-    // Amino asit işlemleri
     const addAminoAcid = (name: string) => {
         if (!aminoAcids.find(a => a.name === name)) {
             setAminoAcids([...aminoAcids, { name, value: '', unit: 'mg' }]);
@@ -289,7 +282,6 @@ export default function ProductEditPage() {
         setAminoAcids(aminoAcids.filter((_, i) => i !== index));
     };
 
-    // Liste işlemleri (özellikler, kullanım)
     const addToList = (listName: 'features' | 'usage', value: string, setter: (v: string) => void) => {
         if (value.trim()) {
             setFormData(prev => ({
@@ -341,7 +333,6 @@ export default function ProductEditPage() {
                 <h1 className="text-2xl font-bold text-gray-900">Ürün Düzenle: {product.name}</h1>
             </div>
 
-            {/* Sekmeler */}
             <div className="flex border-b mb-6">
                 {tabs.map(tab => (
                     <button
@@ -358,7 +349,6 @@ export default function ProductEditPage() {
             </div>
 
             <div className="bg-white rounded-lg shadow p-6">
-                {/* GENEL BİLGİLER SEKMESİ */}
                 {activeTab === 'general' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -450,7 +440,6 @@ export default function ProductEditPage() {
                     </div>
                 )}
 
-                {/* VARYANTLAR SEKMESİ */}
                 {activeTab === 'variants' && (
                     <div>
                         <div className="flex justify-between items-center mb-4">
@@ -572,10 +561,8 @@ export default function ProductEditPage() {
                     </div>
                 )}
 
-                {/* DETAYLAR SEKMESİ */}
                 {activeTab === 'details' && (
                     <div className="space-y-8">
-                        {/* Özellikler */}
                         <div>
                             <h3 className="text-lg font-semibold mb-3">Özellikler</h3>
                             <div className="flex gap-2 mb-2">
@@ -605,7 +592,6 @@ export default function ProductEditPage() {
                             </div>
                         </div>
 
-                        {/* Kullanım Şekli */}
                         <div>
                             <h3 className="text-lg font-semibold mb-3">Kullanım Şekli</h3>
                             <div className="flex gap-2 mb-2">
@@ -635,7 +621,6 @@ export default function ProductEditPage() {
                             </ol>
                         </div>
 
-                        {/* İçindekiler */}
                         <div>
                             <h3 className="text-lg font-semibold mb-3">İçindekiler</h3>
                             <textarea
@@ -647,7 +632,6 @@ export default function ProductEditPage() {
                             />
                         </div>
 
-                        {/* Besin Değerleri */}
                         <div>
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-lg font-semibold">Besin Değerleri (Servis: {formData.servingSize || '-'})</h3>
@@ -696,7 +680,6 @@ export default function ProductEditPage() {
                             </div>
                         </div>
 
-                        {/* Amino Asitler */}
                         <div>
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-lg font-semibold">Amino Asitler (Servis: {aminoAcidServingSize})</h3>
@@ -747,7 +730,6 @@ export default function ProductEditPage() {
                     </div>
                 )}
 
-                {/* Kaydet Butonu */}
                 <div className="flex gap-3 mt-8 pt-6 border-t">
                     <button
                         type="button"

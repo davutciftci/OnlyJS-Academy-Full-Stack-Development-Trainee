@@ -1,13 +1,21 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import {
     LayoutDashboard,
     Package,
     FolderTree,
     ShoppingCart,
+    MessageSquare,
+    Truck,
     LogOut
 } from 'lucide-react';
+
+const PageLoader = () => (
+    <div className="min-h-screen flex items-center justify-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+    </div>
+);
 
 export default function AdminLayout() {
     const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -42,6 +50,8 @@ export default function AdminLayout() {
         { path: '/admin/products', icon: Package, label: 'Ürünler' },
         { path: '/admin/categories', icon: FolderTree, label: 'Kategoriler' },
         { path: '/admin/orders', icon: ShoppingCart, label: 'Siparişler' },
+        { path: '/admin/comments', icon: MessageSquare, label: 'Ürün Yorumları' },
+        { path: '/admin/shipping', icon: Truck, label: 'Kargo Bilgileri' },
     ];
 
     return (
@@ -98,7 +108,9 @@ export default function AdminLayout() {
                 </header>
 
                 <main className="p-6">
-                    <Outlet />
+                    <Suspense fallback={<PageLoader />}>
+                        <Outlet />
+                    </Suspense>
                 </main>
             </div>
         </div>
