@@ -25,7 +25,6 @@ export default function ProteinPage() {
         fetchProducts();
     }, []);
 
-    // Fiyat hesaplama helper
     const getDisplayPrice = (product: Product) => {
         if (product.variants && product.variants.length > 0) {
             return Number(product.variants[0].price);
@@ -33,7 +32,6 @@ export default function ProteinPage() {
         return product.basePrice || 0;
     };
 
-    // İndirim hesaplama helper
     const getMaxDiscount = (product: Product) => {
         if (product.variants && product.variants.some(v => v.discount && v.discount > 0)) {
             return Math.max(...product.variants.map(v => v.discount || 0));
@@ -41,7 +39,6 @@ export default function ProteinPage() {
         return 0;
     };
 
-    // Ürün görseli helper
     const getProductImage = (product: Product) => {
         const BACKEND_BASE_URL = 'http://localhost:3000';
         if (product.photos && product.photos.length > 0) {

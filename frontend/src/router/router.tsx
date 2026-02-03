@@ -6,11 +6,9 @@ import AccountLayout from '../components/layout/AccountLayout';
 import CheckoutLayout from '../components/layout/CheckoutLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 
-// Critical pages - load immediately
 import HomePage from '../pages/home/HomePage';
 import AllProductsPage from '../pages/products/AllProductsPage';
 
-// Lazy load heavy pages
 const ProductDetailPage = lazy(() => import('../pages/products/ProductDetailPage'));
 const ContactPage = lazy(() => import('../pages/contact/ContactPage'));
 const ReviewsPage = lazy(() => import('../pages/reviews/ReviewsPage'));
@@ -29,7 +27,6 @@ const RefundPolicyPage = lazy(() => import('../pages/policies/RefundPolicyPage')
 const WorkPrinciplesPage = lazy(() => import('../pages/policies/WorkPrinciplesPage'));
 const KVKKPage = lazy(() => import('../pages/policies/KVKKPage'));
 
-// Admin pages - lazy load (heavy components)
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const ProductManagement = lazy(() => import('../pages/admin/ProductManagement'));
 const CategoryManagement = lazy(() => import('../pages/admin/CategoryManagement'));

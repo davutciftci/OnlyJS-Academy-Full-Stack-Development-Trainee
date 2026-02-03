@@ -48,7 +48,6 @@ export interface CreateCategoryRequest {
 export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> { }
 
 export const adminService = {
-    // Product Management
     async createProduct(data: CreateProductRequest): Promise<Product> {
         const response = await apiClient.post<ApiResponse<Product>>('/products', data);
         if (response.data.data) {
@@ -69,7 +68,6 @@ export const adminService = {
         await apiClient.delete(`/products/${id}`);
     },
 
-    // Category Management
     async getCategories(): Promise<Category[]> {
         const response = await apiClient.get<ApiResponse<Category[]>>('/categories');
         return response.data.data || [];
@@ -95,7 +93,6 @@ export const adminService = {
         await apiClient.delete(`/categories/${id}`);
     },
 
-    // Order Management
     async getOrders(): Promise<Order[]> {
         const response = await apiClient.get<ApiResponse<Order[]>>('/orders');
         return response.data.data || [];

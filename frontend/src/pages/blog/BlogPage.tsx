@@ -4,7 +4,6 @@ export default function BlogPage() {
     return (
         <div className="bg-white min-h-screen py-28">
             <div className="container-custom mx-auto px-4">
-                {/* Header */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-black mb-4">Blog</h1>
                     <p className="text-gray-600 text-lg">
@@ -12,7 +11,6 @@ export default function BlogPage() {
                     </p>
                 </div>
 
-                {/* Placeholder Content */}
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-12 text-center">
                         <div className="mb-6">
@@ -53,7 +51,6 @@ export default function BlogPage() {
                         </div>
                     </div>
 
-                    {/* Coming Soon Topics */}
                     <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-white border border-gray-200 rounded-lg p-6">
                             <h3 className="text-lg font-bold mb-2">Spor Beslenmesi</h3>

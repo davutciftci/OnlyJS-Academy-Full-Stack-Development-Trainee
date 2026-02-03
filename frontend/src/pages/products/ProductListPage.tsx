@@ -38,7 +38,6 @@ export default function ProductDetailPage() {
 
             try {
                 const productData = await productService.getProductBySlug(slug);
-                // Backend base URL for static uploads (without /api prefix)
                 const BACKEND_BASE_URL = 'http://localhost:3000';
                 const mappedProduct = {
                     ...productData,
@@ -48,7 +47,6 @@ export default function ProductDetailPage() {
                     expirationDate: productData.expirationDate
                         ? new Date(productData.expirationDate).toLocaleDateString('tr-TR', { month: '2-digit', year: 'numeric' })
                         : undefined,
-                    // Extract unique sizes with their info
                     sizes: productData.variants
                         ?.filter((v, i, arr) => arr.findIndex(x => x.size === v.size) === i)
                         .map((v) => ({
@@ -57,7 +55,6 @@ export default function ProductDetailPage() {
                             price: v.price,
                             discount: v.discount
                         })) || [],
-                    // Extract unique aromas
                     aromas: productData.variants
                         ?.filter((v, i, arr) => arr.findIndex(x => x.aroma === v.aroma) === i)
                         .map((v) => ({
@@ -528,7 +525,6 @@ export default function ProductDetailPage() {
                 </div>
             </div>
 
-            {/* Breadcrumb Navigation */}
             <div className="container-custom py-8">
                 <div className="flex items-center gap-2 mt-8 text-sm">
                     <Link to="/" className="text-gray-600 hover:text-gray-900">OJS Nutrition</Link>

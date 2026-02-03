@@ -43,12 +43,10 @@ const ContactPage = ({ hideHeaderAndFooter = false }: ContactPageProps) => {
                 setSuccess(data.message || 'Mesajınız başarıyla gönderildi!');
                 setFormData({ firstName: '', lastName: '', email: '', message: '' });
             } else {
-                // Backend'den gelen hata mesajını göster
                 const errorMessage = data.message || data.error || 'Bir hata oluştu. Lütfen tekrar deneyin.';
                 setError(errorMessage);
             }
         } catch (err: unknown) {
-            // Network hatası veya beklenmeyen hata
             const errorMessage = err instanceof Error ? err.message : 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin.';
             setError(errorMessage);
         } finally {

@@ -19,18 +19,15 @@ export default function LoginPage() {
         try {
             await login({ email, password });
 
-            // Login başarılı - AuthContext'ten user'ı al
             const { authService } = await import('../../services/authService');
             const currentUser = await authService.getCurrentUser();
 
-            // Redirect based on role
             if (currentUser?.role === 'ADMIN') {
                 navigate('/admin');
             } else {
                 navigate('/');
             }
         } catch (err) {
-            // Hata oldu - mesajı göster ve sayfada kal
             setError(err instanceof Error ? err.message : 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
             setTimeout(() => setError(''), 10000);
             setIsLoading(false);

@@ -27,9 +27,7 @@ export default function RegisterPage() {
                 password,
                 birth_date,
             });
-            // Kayıt başarılı - alert göster
             alert('Üyeliğiniz başarıyla gerçekleşti! Hoş geldiniz.');
-            // Ana sayfaya yönlendir (otomatik login yapıldı)
             navigate('/');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');

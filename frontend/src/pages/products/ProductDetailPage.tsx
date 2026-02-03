@@ -780,7 +780,6 @@ export default function ProductDetailPage() {
                 { }
                 <div className="space-y-4 mb-8">
                     {(() => {
-                        // Sadece onaylanmış yorumları al ve en yeniden en eskiye sırala
                         const approvedComments = product.comments
                             ?.filter((c: ProductComment) => c.isApproved)
                             .sort((a: ProductComment, b: ProductComment) => {
@@ -796,14 +795,12 @@ export default function ProductDetailPage() {
                                     { }
                                     <div className="md:hidden">
                                         <div className="flex items-center gap-0.5">
-                                            {/* Dolu yıldızlar */}
                                             {[...Array(review.rating)].map((_, i) => (
                                                 <MdOutlineStar
                                                     key={`filled-${i}`}
                                                     className="w-5 h-5 text-yellow-400"
                                                 />
                                             ))}
-                                            {/* Boş yıldızlar */}
                                             {[...Array(5 - review.rating)].map((_, i) => (
                                                 <MdOutlineStar
                                                     key={`empty-${i}`}
@@ -825,14 +822,12 @@ export default function ProductDetailPage() {
                                     <div className="hidden md:flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
                                             <div className="flex items-center gap-0.5">
-                                                {/* Dolu yıldızlar */}
                                                 {[...Array(review.rating)].map((_, i) => (
                                                     <MdOutlineStar
                                                         key={`filled-${i}`}
                                                         className="w-5 h-5 text-yellow-400"
                                                     />
                                                 ))}
-                                                {/* Boş yıldızlar */}
                                                 {[...Array(5 - review.rating)].map((_, i) => (
                                                     <MdOutlineStar
                                                         key={`empty-${i}`}
@@ -890,67 +885,6 @@ export default function ProductDetailPage() {
                     </div>
                     <span className="text-gray-400">&gt;</span>
                 </div>
-                {/*  <h2 className="text-xl font-bold text-gray-900 mb-6 text-center uppercase tracking-wide">
-                    ÇOK SATANLAR
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-6 pr-2 mb-6">
-                    {PRODUCTS.slice(0, 6).map((item) => (
-                        <Link
-                            key={item.id}
-                            to={`/urun/${item.category?.slug || product?.category?.slug || 'urunler'}/${item.slug}`}
-                            className="group flex flex-col"
-                        >
-                            <div className="relative aspect-square mb-1">
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
-                                />
-                                {item.discountPercentage && (
-                                    <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 bg-[#ef0000] text-white px-1.5 py-1 text-[10px] font-bold text-center leading-tight">
-                                        <span className="block">%{item.discountPercentage}</span>
-                                        <span className="block">İNDİRİM</span>
-                                    </div>
-                                )}
-                            </div>
-                            <h3 className="text-xs sm:text-sm font-bold text-gray-900 text-center min-h-[1.75rem] flex items-center justify-center">
-                                {item.name}
-                            </h3>
-                            <p className="text-[10px] sm:text-xs text-gray-500 text-center min-h-[1.5rem] flex items-center justify-center leading-tight">
-                                {item.description}
-                            </p>
-                            <div className="flex items-center justify-center gap-0.5 mb-1">
-                                {[...Array(5)].map((_, i) => (
-                                    <MdOutlineStar
-                                        key={i}
-                                        className={`w-3 h-3 ${i < Math.floor(item.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                                    />
-                                ))}
-                            </div>
-                            <p className="text-[10px] sm:text-xs text-gray-500 text-center mb-2">
-                                {item.reviews.toLocaleString('tr-TR')} Yorum
-                            </p>
-                            <div className="flex items-center justify-center gap-2 flex-wrap">
-                                <span className="text-sm font-bold text-gray-900">{item.price} TL</span>
-                                {item.oldPrice && (
-                                    <span className="text-xs text-red-500 line-through">{item.oldPrice} TL</span>
-                                )}
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-
-                { }
-                <div className="flex justify-center ">
-                    <Link
-                        to="/urunler"
-                        className="text-white font-medium text-center rounded-[4px] w-[262px] h-[40px] transition-all hover:opacity-90 flex items-center justify-center"
-                        style={{ backgroundColor: '#2126AB' }}
-                    >
-                        TÜMÜNÜ GÖR
-                    </Link>
-                </div> */}
-
                 <div className="flex items-center gap-2 mt-8 text-sm">
                     <Link to="/" className="text-gray-600 hover:text-gray-900">OJS Nutrition</Link>
                     <span className="text-gray-400">&gt;</span>

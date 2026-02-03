@@ -96,11 +96,9 @@ const ReviewsPage = () => {
                         {reviews.map((review) => (
                             <div key={review.id} className="flex flex-col gap-2">
                                 <div className="flex items-center gap-1 mb-1">
-                                    {/* Dolu yıldızlar */}
                                     {[...Array(review.rating)].map((_, i) => (
                                         <Star key={`filled-${i}`} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                                     ))}
-                                    {/* Boş yıldızlar */}
                                     {[...Array(5 - review.rating)].map((_, i) => (
                                         <Star key={`empty-${i}`} className="w-3 h-3 text-gray-300" />
                                     ))}
