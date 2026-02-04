@@ -85,6 +85,12 @@ router.put(
     validate(updateCommentSchema),
     updateCommentById
 );
+router.patch(
+    '/:id',
+    authenticate,
+    validate(updateCommentSchema),
+    updateCommentById
+);
 router.delete('/:id', authenticate, deleteCommentById);
 
 router.get(

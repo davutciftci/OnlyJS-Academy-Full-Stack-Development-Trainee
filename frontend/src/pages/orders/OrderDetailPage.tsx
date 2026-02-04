@@ -271,9 +271,7 @@ export default function OrderDetailPage() {
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                            {userComment.title && (
-                                                                <h4 className="font-bold text-gray-900 text-sm mb-1">{userComment.title}</h4>
-                                                            )}
+                                                            <h4 className="font-bold text-gray-900 text-sm mb-1">{userComment.title}</h4>
                                                             <p className="text-sm text-gray-700">{userComment.comment}</p>
                                                         </div>
                                                     )}

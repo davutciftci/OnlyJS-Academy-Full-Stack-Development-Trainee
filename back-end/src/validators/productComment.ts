@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const createCommentSchema = z.object({
-    title: z.union([
-        z.string().min(3, 'Başlık en az 3 karakter olmalı').max(100, 'Başlık en fazla 100 karakter olmalı'),
-        z.literal(''),
-    ]).optional(),
+    title: z
+        .string({ message: 'Başlık gerekli' })
+        .min(3, 'Başlık en az 3 karakter olmalı')
+        .max(100, 'Başlık en fazla 100 karakter olmalı'),
 
     rating: z
         .number({ message: 'Puan gerekli' })
@@ -24,10 +24,11 @@ export const createCommentSchema = z.object({
 });
 
 export const updateCommentSchema = z.object({
-    title: z.union([
-        z.string().min(3, 'Başlık en az 3 karakter olmalı').max(100, 'Başlık en fazla 100 karakter olmalı'),
-        z.literal(''),
-    ]).optional(),
+    title: z
+        .string({ message: 'Başlık gerekli' })
+        .min(3, 'Başlık en az 3 karakter olmalı')
+        .max(100, 'Başlık en fazla 100 karakter olmalı')
+        .optional(),
 
     rating: z
         .number()

@@ -125,6 +125,7 @@ export const getOrderById = async (id: number) => {
                     productComments: {
                         select: {
                             id: true,
+                            title: true,
                             rating: true,
                             comment: true,
                             userId: true,
