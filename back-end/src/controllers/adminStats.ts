@@ -59,14 +59,16 @@ export const getTopProducts = asyncHandler(async (
     res: Response,
     next: NextFunction
 ) => {
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
-    const products = await getTopSellingProducts(limit);
+    const result = await getTopSellingProducts(page, limit);
 
     res.status(200).json({
         status: 'success',
-        results: products.length,
-        data: products,
+        results: result.products.length,
+        data: result.products,
+        pagination: result.pagination,
     });
 });
 
@@ -76,14 +78,16 @@ export const getRecentUsersList = asyncHandler(async (
     res: Response,
     next: NextFunction
 ) => {
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
-    const users = await getRecentUsers(limit);
+    const result = await getRecentUsers(page, limit);
 
     res.status(200).json({
         status: 'success',
-        results: users.length,
-        data: users,
+        results: result.users.length,
+        data: result.users,
+        pagination: result.pagination,
     });
 });
 
@@ -93,14 +97,17 @@ export const getLowStock = asyncHandler(async (
     res: Response,
     next: NextFunction
 ) => {
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const threshold = req.query.threshold ? parseInt(req.query.threshold as string) : 10;
 
-    const products = await getLowStockProducts(threshold);
+    const result = await getLowStockProducts(page, limit, threshold);
 
     res.status(200).json({
         status: 'success',
-        results: products.length,
-        data: products,
+        results: result.products.length,
+        data: result.products,
+        pagination: result.pagination,
     });
 });
 

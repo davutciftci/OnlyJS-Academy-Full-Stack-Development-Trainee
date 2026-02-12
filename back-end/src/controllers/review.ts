@@ -33,12 +33,16 @@ export const getProductReviewsController = asyncHandler(async (
     next: NextFunction
 ) => {
     const productId = parseInt(req.params.productId);
-    const reviews = await reviewService.getProductReviews(productId);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    
+    const result = await reviewService.getProductReviews(productId, page, limit);
 
     res.status(200).json({
         status: 'success',
-        results: reviews.length,
-        data: reviews
+        results: result.reviews.length,
+        data: result.reviews,
+        pagination: result.pagination,
     });
 });
 
@@ -47,13 +51,16 @@ export const getAllReviewsController = asyncHandler(async (
     res: Response,
     next: NextFunction
 ) => {
+    const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const reviews = await reviewService.getAllApprovedReviews(limit);
+    
+    const result = await reviewService.getAllApprovedReviews(page, limit);
 
     res.status(200).json({
         status: 'success',
-        results: reviews.length,
-        data: reviews
+        results: result.reviews.length,
+        data: result.reviews,
+        pagination: result.pagination,
     });
 });
 

@@ -70,14 +70,14 @@ const baseTemplate = (content: string) => `
 <body>
   <div class="container">
     <div class="header">
-      <h1>🏋️ Protein Shop</h1>
+      <h1>🏋️DC Protein Shop</h1>
     </div>
     <div class="content">
       ${content}
     </div>
     <div class="footer">
       <p>Bu email otomatik olarak gönderilmiştir. Lütfen yanıtlamayın.</p>
-      <p>&copy; 2026 Protein Shop. Tüm hakları saklıdır.</p>
+      <p>&copy; 2026 DC Protein Shop. Tüm hakları saklıdır.</p>
     </div>
   </div>
 </body>
@@ -87,7 +87,7 @@ const baseTemplate = (content: string) => `
 export const welcomeEmail = (firstName: string) => {
   const content = `
     <h2>Hoş Geldiniz ${firstName}! 🎉</h2>
-    <p>Protein Shop ailesine katıldığınız için teşekkür ederiz!</p>
+    <p>DC Protein Shop ailesine katıldığınız için teşekkür ederiz!</p>
     <p>Hesabınız başarıyla oluşturuldu. Artık en kaliteli protein ürünlerine kolayca ulaşabilirsiniz.</p>
     <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}" class="button text-white">
       Alışverişe Başla

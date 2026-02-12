@@ -62,8 +62,19 @@ export const createReview = async (
     });
 };
 
-export const getProductReviews = async (productId: number) => {
-    return await prisma.productComment.findMany({
+export const getProductReviews = async (productId: number, page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+
+    const totalReviews = await prisma.productComment.count({
+        where: {
+            productId,
+            isApproved: true
+        }
+    });
+
+    const totalPages = Math.ceil(totalReviews / limit);
+
+    const reviews = await prisma.productComment.findMany({
         where: {
             productId,
             isApproved: true
@@ -79,12 +90,36 @@ export const getProductReviews = async (productId: number) => {
         },
         orderBy: {
             createdAt: 'desc'
-        }
+        },
+        skip,
+        take: limit
     });
+
+    return {
+        reviews,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems: totalReviews,
+            itemsPerPage: limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        }
+    };
 };
 
-export const getAllApprovedReviews = async (limit: number = 10) => {
-    return await prisma.productComment.findMany({
+export const getAllApprovedReviews = async (page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+
+    const totalReviews = await prisma.productComment.count({
+        where: {
+            isApproved: true
+        }
+    });
+
+    const totalPages = Math.ceil(totalReviews / limit);
+
+    const reviews = await prisma.productComment.findMany({
         where: {
             isApproved: true
         },
@@ -107,8 +142,21 @@ export const getAllApprovedReviews = async (limit: number = 10) => {
         orderBy: {
             createdAt: 'desc'
         },
+        skip,
         take: limit
     });
+
+    return {
+        reviews,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems: totalReviews,
+            itemsPerPage: limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        }
+    };
 };
 
 export const getUserReviewableOrders = async (userId: number) => {

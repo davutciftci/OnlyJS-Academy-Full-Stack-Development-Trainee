@@ -175,7 +175,19 @@ export const getLast7DaysSales = async () => {
 };
 
 
-export const getTopSellingProducts = async (limit: number = 10) => {
+export const getTopSellingProducts = async (page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+
+    const totalItems = await prisma.orderItem.groupBy({
+        by: ['variantId'],
+        _sum: {
+            quantity: true,
+        },
+    });
+
+    const totalCount = totalItems.length;
+    const totalPages = Math.ceil(totalCount / limit);
+
     const topProducts = await prisma.orderItem.groupBy({
         by: ['variantId'],
         _sum: {
@@ -187,6 +199,7 @@ export const getTopSellingProducts = async (limit: number = 10) => {
                 quantity: 'desc',
             },
         },
+        skip,
         take: limit,
     });
 
@@ -207,17 +220,31 @@ export const getTopSellingProducts = async (limit: number = 10) => {
 
             return {
                 variantId: item.variantId,
-                productName: variant?.product.name || 'Bilinmeyor',
-                variantName: variant?.name || 'Bilinmeyor',
+                productName: variant?.product.name || 'Bilinmeyen',
+                variantName: variant?.name || 'Bilinmeyen',
                 totalSold: item._sum.quantity || 0,
                 totalRevenue: Number(item._sum.subtotal || 0).toFixed(2),
             };
         })
     );
 
-    return productsWithDetails;
+    return {
+        products: productsWithDetails,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems: totalCount,
+            itemsPerPage: limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        }
+    };
 };
-export const getRecentUsers = async (limit: number = 10) => {
+export const getRecentUsers = async (page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+
+    const totalUsers = await prisma.user.count();
+    const totalPages = Math.ceil(totalUsers / limit);
 
     const users = await prisma.user.findMany({
         select: {
@@ -231,13 +258,37 @@ export const getRecentUsers = async (limit: number = 10) => {
         orderBy: {
             createdAt: 'desc',
         },
+        skip,
         take: limit,
     });
 
-    return users;
+    return {
+        users,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems: totalUsers,
+            itemsPerPage: limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        }
+    };
 };
 
-export const getLowStockProducts = async (threshold: number = 10) => {
+export const getLowStockProducts = async (page: number = 1, limit: number = 10, threshold: number = 10) => {
+    const skip = (page - 1) * limit;
+
+    const totalItems = await prisma.productVariant.count({
+        where: {
+            stockCount: {
+                lt: threshold,
+            },
+            isActive: true,
+        },
+    });
+
+    const totalPages = Math.ceil(totalItems / limit);
+
     const lowStockVariants = await prisma.productVariant.findMany({
         where: {
             stockCount: {
@@ -257,6 +308,8 @@ export const getLowStockProducts = async (threshold: number = 10) => {
         orderBy: {
             stockCount: 'asc',
         },
+        skip,
+        take: limit,
     });
 
     const formatted = lowStockVariants.map(v => ({
@@ -268,7 +321,17 @@ export const getLowStockProducts = async (threshold: number = 10) => {
         price: Number(v.price).toFixed(2),
     }));
 
-    return formatted;
+    return {
+        products: formatted,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalItems,
+            itemsPerPage: limit,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        }
+    };
 };
 
 
