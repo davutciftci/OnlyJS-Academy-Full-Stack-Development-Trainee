@@ -19,6 +19,9 @@ export const getProductPhotos = asyncHandler(async (
 
     const photos = await getPhotosByProductId(productId);
 
+    // 24 saat cache
+    res.setHeader('Cache-Control', 'public, max-age=86400'); 
+
     res.status(200).json({
         status: 'success',
         results: photos.length,
@@ -34,6 +37,9 @@ export const getPhoto = asyncHandler(async (
     const id = parseInt(req.params.id);
 
     const photo = await getPhotoById(id);
+
+    // 24 saat cache
+    res.setHeader('Cache-Control', 'public, max-age=86400'); 
 
     res.status(200).json({
         status: 'success',

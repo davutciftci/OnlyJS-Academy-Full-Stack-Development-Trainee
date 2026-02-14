@@ -19,6 +19,9 @@ export const getDashboard = asyncHandler(async (
 ) => {
     const stats = await getDashboardStats();
 
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
+
     res.status(200).json({
         status: 'success',
         data: stats,
@@ -33,6 +36,9 @@ export const getOrderStatus = asyncHandler(async (
 ) => {
     const stats = await getOrderStatusStats();
 
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
+
     res.status(200).json({
         status: 'success',
         data: stats,
@@ -46,6 +52,9 @@ export const get7DaysSales = asyncHandler(async (
     next: NextFunction
 ) => {
     const sales = await getLast7DaysSales();
+
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
 
     res.status(200).json({
         status: 'success',
@@ -63,6 +72,9 @@ export const getTopProducts = asyncHandler(async (
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
     const result = await getTopSellingProducts(page, limit);
+
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
 
     res.status(200).json({
         status: 'success',
@@ -82,6 +94,9 @@ export const getRecentUsersList = asyncHandler(async (
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
     const result = await getRecentUsers(page, limit);
+
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
 
     res.status(200).json({
         status: 'success',
@@ -103,6 +118,9 @@ export const getLowStock = asyncHandler(async (
 
     const result = await getLowStockProducts(page, limit, threshold);
 
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
+
     res.status(200).json({
         status: 'success',
         results: result.products.length,
@@ -119,6 +137,9 @@ export const getCategoryDistribution = asyncHandler(async (
 ) => {
     const distribution = await getProductsByCategory();
 
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
+
     res.status(200).json({
         status: 'success',
         data: distribution,
@@ -134,6 +155,9 @@ export const getMonthlyReport = asyncHandler(async (
     const year = req.query.year ? parseInt(req.query.year as string) : undefined;
 
     const report = await getMonthlyRevenue(year);
+
+    // 5 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=300');
 
     res.status(200).json({
         status: 'success',

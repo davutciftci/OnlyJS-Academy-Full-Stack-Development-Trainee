@@ -6,6 +6,9 @@ export const getCategories = asyncHandler(async (req: Request, res: Response, ne
     const activeOnly = req.query.activeOnly === 'true';
     const categories = await getAllCategories(activeOnly);
 
+    // 1 saat cache
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+
     res.status(200).json({
         status: 'success',
         result: categories.length,
@@ -16,6 +19,9 @@ export const getCategories = asyncHandler(async (req: Request, res: Response, ne
 export const getCategory = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id);
     const category = await getCategoryById(id);
+
+    // 1 saat cache
+    res.setHeader('Cache-Control', 'public, max-age=3600');
 
     res.status(200).json({
         status: 'success',

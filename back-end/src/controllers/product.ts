@@ -22,6 +22,9 @@ export const searchProducts = asyncHandler(async (req: Request, res: Response, n
 
     const products = await searchAndFilterProducts(filters);
 
+    // 30 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+
     res.status(200).json({
         status: 'success',
         results: products.length,
@@ -45,6 +48,9 @@ export const getPaginatedProductsList = asyncHandler(async (req: Request, res: R
 
     const result = await getPaginatedProducts(filters, page, limit);
 
+    // 30 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+
     res.status(200).json({
         status: 'success',
         data: result.products,
@@ -67,6 +73,9 @@ export const getProducts = asyncHandler(async (
 
     const products = await searchAndFilterProducts(filters);
 
+    // 30 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+
     res.status(200).json({
         status: 'success',
         results: products.length,
@@ -83,6 +92,9 @@ export const getProduct = asyncHandler(async (
 
     const product = await getProductById(id);
 
+    // 30 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=1800');
+
     res.status(200).json({
         status: 'success',
         data: product,
@@ -97,6 +109,9 @@ export const getProductBySlug = asyncHandler(async (
     const { slug } = req.params;
 
     const product = await getProductBySlugService(slug);
+
+    // 30 dakika cache
+    res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',
