@@ -27,10 +27,11 @@ export default function RegisterPage() {
                 password,
                 birth_date,
             });
-            alert('Üyeliğiniz başarıyla gerçekleşti! Hoş geldiniz.');
-            navigate('/');
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');
+            localStorage.setItem('verify_email', email);
+            navigate('/dogrula', { state: { email } });
+        } catch (err: unknown) {
+            const errorObj = err as { message?: string };
+            setError(errorObj.message || 'Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.');
         } finally {
             setIsLoading(false);
         }

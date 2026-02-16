@@ -7,6 +7,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (data: LoginRequest) => Promise<void>;
     register: (data: RegisterRequest) => Promise<void>;
+    verifyEmail: (email: string, code: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -65,6 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const register = async (data: RegisterRequest) => {
         const { authService } = await import('../services/authService');
         const response = await authService.register(data);
+        if (response.token) {
+            setStoredToken(response.token);
+            setUser(response.user);
+        }
+    };
+
+    const verifyEmail = async (email: string, code: string) => {
+        const { authService } = await import('../services/authService');
+        const response = await authService.verifyEmail(email, code);
         setStoredToken(response.token);
         setUser(response.user);
     };
@@ -82,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 login,
                 register,
+                verifyEmail,
                 logout,
             }}
         >

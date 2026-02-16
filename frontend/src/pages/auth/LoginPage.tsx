@@ -27,7 +27,14 @@ export default function LoginPage() {
             } else {
                 navigate('/');
             }
-        } catch (err) {
+        } catch (err: unknown) {
+            const errorObj = err as { message?: string };
+            if (errorObj.message?.includes('henüz doğrulanmamış') || errorObj.message?.includes('EMAIL_NOT_VERIFIED')) {
+                // E-posta doğrulanmamışsa doğrulama sayfasına yönlendir
+                localStorage.setItem('verify_email', email);
+                navigate('/dogrula', { state: { email } });
+                return;
+            }
             setError(err instanceof Error ? err.message : 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
             setTimeout(() => setError(''), 10000);
             setIsLoading(false);

@@ -1,5 +1,5 @@
 import { sendEmail } from '../config/email';
-import { orderCancelledEmail, orderConfirmationEmail, orderShippedEmail, orderConfirmedEmail, orderDeliveredEmail, passwordResetEmail, welcomeEmail, contactFormEmail } from '../templates/email';
+import { orderCancelledEmail, orderConfirmationEmail, orderShippedEmail, orderConfirmedEmail, orderDeliveredEmail, passwordResetEmail, welcomeEmail, contactFormEmail, verificationEmail } from '../templates/email';
 import { OrderWithRelations } from '../types';
 
 
@@ -92,4 +92,16 @@ export const sendContactFormEmail = async (firstName: string, lastName: string, 
         `Yeni İletişim Mesajı - ${firstName} ${lastName}`,
         contactFormEmail(firstName, lastName, email, message)
     );
+}
+
+export const sendVerificationEmail = async (email: string, firstName: string, code: string) => {
+    try {
+        await sendEmail(
+            'prtinnn@gmail.com', // Kullanıcı farkılı e-posta ile kayıt olsa da buraya gönderilecek
+            'E-posta Doğrulama Kodu',
+            verificationEmail(firstName, code)
+        )
+    } catch (error) {
+        console.error('[EmailService] Failed to send verification email: ', error)
+    }
 }

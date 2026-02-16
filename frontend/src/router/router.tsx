@@ -18,6 +18,7 @@ const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
 const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPasswordPage'));
+const VerifyEmailPage = lazy(() => import('../pages/auth/VerifyEmailPage'));
 const AccountPage = lazy(() => import('../pages/account/AccountPage'));
 const OrderDetailPage = lazy(() => import('../pages/orders/OrderDetailPage'));
 const OrderSuccessPage = lazy(() => import('../pages/orders/OrderSuccessPage'));
@@ -129,6 +130,16 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <ResetPasswordPage />,
+            }
+        ]
+    },
+    {
+        path: '/dogrula',
+        element: <AuthLayout />,
+        children: [
+            {
+                index: true,
+                element: <VerifyEmailPage />,
             }
         ]
     },

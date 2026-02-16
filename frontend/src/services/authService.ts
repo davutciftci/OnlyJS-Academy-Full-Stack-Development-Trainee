@@ -35,8 +35,10 @@ export const authService = {
             const response = await apiClient.post(ENDPOINTS.AUTH.REGISTER, data);
             const result = response.data;
 
-            if (result.data?.token) {
-                setAuthToken(result.data.token);
+            if (result.status === 'success') {
+                if (result.data?.token) {
+                    setAuthToken(result.data.token);
+                }
                 return result.data;
             }
 
@@ -65,6 +67,45 @@ export const authService = {
             if (error && typeof error === 'object' && 'response' in error) {
                 const axiosError = error as { response?: { data?: ApiErrorResponse } };
                 const errorMessage = axiosError.response?.data?.message || 'Kullanıcı bilgisi alınamadı';
+                throw new Error(errorMessage);
+            }
+            throw error;
+        }
+    },
+
+    async verifyEmail(email: string, code: string): Promise<AuthResponse> {
+        try {
+            const response = await apiClient.post('/user/verify-email', { email, code });
+            const result = response.data;
+
+            if (result.data?.token) {
+                setAuthToken(result.data.token);
+                return result.data;
+            }
+
+            throw new Error(result.message || 'Doğrulama başarısız');
+        } catch (error: unknown) {
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: ApiErrorResponse } };
+                const errorMessage = axiosError.response?.data?.message || 'Doğrulama başarısız';
+                throw new Error(errorMessage);
+            }
+            throw error;
+        }
+    },
+
+    async resendCode(email: string): Promise<void> {
+        try {
+            const response = await apiClient.post('/user/resend-verification', { email });
+            const result = response.data;
+
+            if (result.status !== 'success') {
+                throw new Error(result.message || 'Kod gönderilemedi');
+            }
+        } catch (error: unknown) {
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: ApiErrorResponse } };
+                const errorMessage = axiosError.response?.data?.message || 'Kod gönderilemedi';
                 throw new Error(errorMessage);
             }
             throw error;

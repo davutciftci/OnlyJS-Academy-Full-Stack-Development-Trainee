@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from '../middlewares/auth';
 import prisma from '../utils/prisma';
 import { NotFoundError } from '../utils/customErrors';
 import jwt from 'jsonwebtoken';
-
+import { sendVerificationEmail } from '../services/mail';
 
 interface RegisterRequest {
     firstName: string;
@@ -17,29 +17,34 @@ interface RegisterRequest {
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, password, birth_date } = req.body as RegisterRequest;
-    const user = await createUser({
-        firstName,
-        lastName,
-        email,
-        password,
-        birthDay: new Date(birth_date)
+    
+    // 6 haneli doğrulama kodu üret
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 dakika
+
+    const user = await prisma.user.create({
+        data: {
+            firstName,
+            lastName,
+            email,
+            hashedPassword: await require('bcrypt').hash(password, 10),
+            birthDay: new Date(birth_date),
+            verificationCode,
+            verificationCodeExpires,
+            isVerified: false
+        }
     });
 
-    // Kayıt sonrası otomatik login için token oluştur
-    const token = jwt.sign(
-        { userId: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET!,
-        { expiresIn: '7d' }
-    );
+    // Doğrulama maili gönder (prtinnn@gmail.com'a gidecek şekilde ayarlandı)
+    await sendVerificationEmail(email, firstName, verificationCode);
 
-    const { hashedPassword, ...userWithoutPassword } = user;
+    const { hashedPassword, verificationCode: vc, ...userWithoutSensitiveData } = user;
 
     return res.status(201).json({
         status: "success",
-        message: 'Kullanıcı başarıyla oluşturuldu',
+        message: 'Kullanıcı başarıyla oluşturuldu. Lütfen e-posta adresinize gönderilen kodu doğrulayın.',
         data: { 
-            user: userWithoutPassword,
-            token 
+            user: userWithoutSensitiveData
         }
     });
 });
@@ -48,6 +53,16 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     const { email, password } = req.body;
 
     const { user, token } = await loginUser(email, password);
+
+    // E-posta doğrulaması yapılmamışsa giriş engellenir
+    if (!user.isVerified) {
+        return res.status(403).json({
+            status: 'error',
+            code: 'EMAIL_NOT_VERIFIED',
+            message: 'E-posta adresiniz henüz doğrulanmamış. Lütfen doğrulama adımını tamamlayın.',
+            data: { email: user.email }
+        });
+    }
 
     return res.status(200).json({
         status: 'success',
@@ -185,6 +200,107 @@ export const changePassword = asyncHandler(async (req: Request, res: Response, n
     return res.status(200).json({
         status: 'success',
         message: 'Şifreniz başarıyla güncellendi'
+    });
+});
+
+export const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+    const { email, code } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!user) {
+        throw new NotFoundError('Kullanıcı bulunamadı');
+    }
+
+    if (user.isVerified) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'E-posta adresi zaten doğrulanmış'
+        });
+    }
+
+    if (user.verificationCode !== code) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Geçersiz doğrulama kodu'
+        });
+    }
+
+    if (user.verificationCodeExpires && user.verificationCodeExpires < new Date()) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'Doğrulama kodunun süresi dolmuş'
+        });
+    }
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            isVerified: true,
+            verificationCode: null,
+            verificationCodeExpires: null
+        }
+    });
+
+    // Doğrulama sonrası otomatik login için token oluştur
+    const token = jwt.sign(
+        { userId: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+    );
+
+    return res.status(200).json({
+        status: 'success',
+        message: 'E-posta adresiniz başarıyla doğrulandı',
+        data: { 
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
+            },
+            token 
+        }
+    });
+});
+
+export const resendVerification = asyncHandler(async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!user) {
+        throw new NotFoundError('Kullanıcı bulunamadı');
+    }
+
+    if (user.isVerified) {
+        return res.status(400).json({
+            status: 'error',
+            message: 'E-posta adresi zaten doğrulanmış'
+        });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            verificationCode,
+            verificationCodeExpires
+        }
+    });
+
+    await sendVerificationEmail(email, user.firstName, verificationCode);
+
+    return res.status(200).json({
+        status: 'success',
+        message: 'Yeni doğrulama kodu gönderildi'
     });
 });
 

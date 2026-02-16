@@ -3,6 +3,8 @@ export const ENDPOINTS = {
         LOGIN: '/user/login',
         REGISTER: '/user/register',
         ME: '/user/me',
+        VERIFY_EMAIL: '/user/verify-email',
+        RESEND_VERIFICATION: '/user/resend-verification',
     },
     CATEGORIES: {
         LIST: '/categories',

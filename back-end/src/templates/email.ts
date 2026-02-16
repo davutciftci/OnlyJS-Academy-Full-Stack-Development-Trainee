@@ -296,3 +296,20 @@ export const contactFormEmail = (
 
   return baseTemplate(content);
 };
+
+export const verificationEmail = (firstName: string, code: string) => {
+  const content = `
+    <h2>Doğrulama Kodunuz</h2>
+    <p>Merhaba ${firstName},</p>
+    <p>DC Protein Shop'a kaydolduğunuz için teşekkürler! Üyeliğinizi tamamlamak için lütfen aşağıdaki 6 haneli doğrulama kodunu kullanın:</p>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2563eb;">${code}</span>
+    </div>
+
+    <p>Bu kod <strong>15 dakika</strong> geçerlidir.</p>
+    <p>Eğer bu işlemi siz yapmadıysanız lütfen bu e-postayı dikkate almayın.</p>
+  `;
+
+  return baseTemplate(content);
+};

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getProfile, login, register, updateProfile, requestPasswordResetController, resetPasswordController, changePassword } from "../controllers/user";
+import { getProfile, login, register, updateProfile, requestPasswordResetController, resetPasswordController, changePassword, verifyEmail, resendVerification } from "../controllers/user";
 import { authenticate, AuthenticatedRequest } from "../middlewares/auth";
 import { loginSchema, registerSchema, requestPasswordResetSchema, resetPasswordSchema, updateProfileSchema, changePasswordSchema } from "../validators/user";
 import { validate } from "../middlewares/validate";
@@ -10,6 +10,8 @@ const router = Router();
 
 router.post('/register', validate(registerSchema), register);
 router.post('/login', validate(loginSchema), login);
+router.post('/verify-email', verifyEmail);
+router.post('/resend-verification', resendVerification);
 router.post('/forgot-password', validate(requestPasswordResetSchema), requestPasswordResetController);
 router.post('/reset-password', validate(resetPasswordSchema), resetPasswordController);
 router.get('/profile', authenticate, getProfile);

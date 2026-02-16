@@ -9,22 +9,25 @@ datasource db {
 }
 
 model User {
-  id               Int              @id(map: "users_pk") @default(autoincrement())
-  firstName        String           @map("first_name")
-  lastName         String           @map("last_name")
-  hashedPassword   String           @map("hashed_password") @db.VarChar
-  birthDay         DateTime         @map("birth_date") @db.Date
-  email            String           @unique(map: "users_unique") @map("email")
-  phoneNumber      String?          @map("phone_number") @db.VarChar(20)
-  role             UserRole         @default(CUSTOMER) @map("role")
-  resetToken       String?          @map("reset_token")
-  resetTokenExpiry DateTime?        @map("reset_token_expiry") @db.Timestamp(6)
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt        DateTime         @updatedAt @map("updated_at") @db.Timestamp(6)
-  comments         ProductComment[]
-  addresses        UserAddress[]
-  cart             Cart?
-  orders           Order[]
+  id                      Int              @id(map: "users_pk") @default(autoincrement())
+  firstName               String           @map("first_name")
+  lastName                String           @map("last_name")
+  hashedPassword          String           @map("hashed_password") @db.VarChar
+  birthDay                DateTime         @map("birth_date") @db.Date
+  email                   String           @unique(map: "users_unique") @map("email")
+  phoneNumber             String?          @map("phone_number") @db.VarChar(20)
+  role                    UserRole         @default(CUSTOMER) @map("role")
+  resetToken              String?          @map("reset_token")
+  resetTokenExpiry        DateTime?        @map("reset_token_expiry") @db.Timestamp(6)
+  createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt               DateTime         @updatedAt @map("updated_at") @db.Timestamp(6)
+  comments                ProductComment[]
+  addresses               UserAddress[]
+  cart                    Cart?
+  orders                  Order[]
+  isVerified              Boolean          @default(false) @map("is_verified")
+  verificationCode        String?          @map("verification_code")
+  verificationCodeExpires DateTime?        @map("verification_code_expires") @db.Timestamp(6)
 
   @@map("users")
 }
