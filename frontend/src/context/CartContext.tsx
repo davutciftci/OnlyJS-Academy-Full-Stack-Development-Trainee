@@ -1,22 +1,7 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useContext, useState, useEffect, type ReactNode } from 'react';
 import { apiClient } from '../api/client';
+import { CartContext } from './CartContextObject';
 import type { CartUIItem, CartItem } from '../types/cart';
-
-interface CartContextType {
-    items: CartUIItem[];
-    isOpen: boolean;
-    showAlert: boolean;
-    addToCart: (item: Omit<CartUIItem, 'quantity' | 'cartItemId'>, quantity?: number) => void;
-    removeFromCart: (id: number) => void;
-    updateQuantity: (id: number, quantity: number) => void;
-    openCart: () => void;
-    closeCart: () => void;
-    clearCart: () => void;
-    totalPrice: number;
-    totalItems: number;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartUIItem[]>([]);

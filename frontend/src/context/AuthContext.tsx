@@ -1,17 +1,6 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useContext, useState, useEffect, type ReactNode } from 'react';
+import { AuthContext } from './AuthContextObject';
 import type { User, LoginRequest, RegisterRequest } from '../types';
-
-interface AuthContextType {
-    user: User | null;
-    isAuthenticated: boolean;
-    isLoading: boolean;
-    login: (data: LoginRequest) => Promise<void>;
-    register: (data: RegisterRequest) => Promise<void>;
-    verifyEmail: (email: string, code: string) => Promise<void>;
-    logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const getStoredToken = (): string | null => {
     try {
