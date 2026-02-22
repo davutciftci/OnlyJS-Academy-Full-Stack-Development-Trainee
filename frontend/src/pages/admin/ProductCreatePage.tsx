@@ -136,7 +136,7 @@ export default function ProductCreatePage() {
         setIsLoading(true);
         try {
             const uploadedPhotos = await Promise.all(
-                photos.map(async (photo, index) => {
+                photos.map(async (photo) => {
                     if (photo.file) {
                         const url = await uploadProductPhoto(photo.file);
                         return {
@@ -182,18 +182,27 @@ export default function ProductCreatePage() {
 
             alert('Ürün başarıyla oluşturuldu!');
             navigate('/admin/products');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Ürün oluşturulamadı:', error);
+            const err = error as { 
+                response?: { 
+                    data?: { 
+                        errors?: Array<{ path?: string[]; message: string }>;
+                        message?: string;
+                    } 
+                }; 
+                message?: string;
+            };
 
-            if (error.response?.data?.errors) {
-                const validationErrors = error.response.data.errors;
-                const errorMessages = validationErrors.map((err: any) => {
-                    const field = err.path?.join('.') || 'Bilinmeyen alan';
-                    return `${field}: ${err.message}`;
+            if (err.response?.data?.errors) {
+                const validationErrors = err.response.data.errors;
+                const errorMessages = validationErrors.map((errorItem) => {
+                    const field = errorItem.path?.join('.') || 'Bilinmeyen alan';
+                    return `${field}: ${errorItem.message}`;
                 }).join('\n');
                 alert(`Validasyon Hataları:\n\n${errorMessages}`);
             } else {
-                const errorMessage = error.response?.data?.message || error.message || 'Ürün oluşturulurken bir hata oluştu';
+                const errorMessage = err.response?.data?.message || err.message || 'Ürün oluşturulurken bir hata oluştu';
                 alert(errorMessage);
             }
         } finally {
@@ -201,7 +210,7 @@ export default function ProductCreatePage() {
         }
     };
 
-    const handleChange = (field: keyof FormData, value: any) => {
+    const handleChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         if (errors[field]) {
             setErrors(prev => {
@@ -232,7 +241,7 @@ export default function ProductCreatePage() {
         }]);
     };
 
-    const updateVariant = (index: number, field: keyof ProductVariant, value: any) => {
+    const updateVariant = (index: number, field: keyof ProductVariant, value: string | number) => {
         const newVariants = [...variants];
         newVariants[index] = { ...newVariants[index], [field]: value };
         setVariants(newVariants);
@@ -266,7 +275,7 @@ export default function ProductCreatePage() {
         });
     };
 
-    const updatePhoto = (index: number, field: keyof ProductPhoto, value: any) => {
+    const updatePhoto = (index: number, field: keyof ProductPhoto, value: string | boolean | number) => {
         const newPhotos = [...photos];
         if (field === 'isPrimary' && value === true) {
             newPhotos.forEach((p, i) => { p.isPrimary = i === index; });

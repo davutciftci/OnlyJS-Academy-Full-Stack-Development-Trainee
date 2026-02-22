@@ -46,9 +46,11 @@ export default function Layout() {
             )}
             <div className="min-h-screen flex flex-col">
                 <Navbar />
-                <Suspense fallback={<PageLoader />}>
-                    <Outlet />
-                </Suspense>
+                <main className="flex-grow">
+                    <Suspense fallback={<PageLoader />}>
+                        <Outlet />
+                    </Suspense>
+                </main>
                 {!hideFooterBanner && <FooterBanner />}
                 <Footer />
             </div>

@@ -6,8 +6,8 @@ import AccountLayout from '../components/layout/AccountLayout';
 import CheckoutLayout from '../components/layout/CheckoutLayout';
 import AdminLayout from '../components/layout/AdminLayout';
 
-import HomePage from '../pages/home/HomePage';
-import AllProductsPage from '../pages/products/AllProductsPage';
+const HomePage = lazy(() => import('../pages/home/HomePage'));
+const AllProductsPage = lazy(() => import('../pages/products/AllProductsPage'));
 
 const ProductDetailPage = lazy(() => import('../pages/products/ProductDetailPage'));
 const ContactPage = lazy(() => import('../pages/contact/ContactPage'));

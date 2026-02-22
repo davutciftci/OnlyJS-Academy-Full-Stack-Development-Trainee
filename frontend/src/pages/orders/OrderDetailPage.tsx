@@ -49,6 +49,7 @@ interface Order {
     shippedAt?: string;
     deliveredAt?: string;
     items: OrderItem[];
+    userId: number;
     shippingAddress: {
         fullName: string;
         addressLine1: string;

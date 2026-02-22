@@ -115,7 +115,7 @@ export default function ProductEditPage() {
             });
 
             if (data.variants && data.variants.length > 0) {
-                setVariants(data.variants.map((v: any) => ({
+                setVariants(data.variants.map((v) => ({
                     id: v.id,
                     name: v.name || '',
                     sku: v.sku || '',
@@ -133,8 +133,8 @@ export default function ProductEditPage() {
                 if (nv.values && Array.isArray(nv.values)) {
                     setNutritionValues(nv.values);
                 }
-                if (nv.servingSize) {
-                    setFormData(prev => ({ ...prev, servingSize: nv.servingSize }));
+                if ((nv as any).servingSize) {
+                    setFormData(prev => ({ ...prev, servingSize: (nv as any).servingSize }));
                 }
             }
 
@@ -143,8 +143,8 @@ export default function ProductEditPage() {
                 if (aa.values && Array.isArray(aa.values)) {
                     setAminoAcids(aa.values);
                 }
-                if (aa.servingSize) {
-                    setAminoAcidServingSize(aa.servingSize);
+                if ((aa as any).servingSize) {
+                    setAminoAcidServingSize(String((aa as any).servingSize));
                 }
             }
 
@@ -214,16 +214,20 @@ export default function ProductEditPage() {
 
             alert('Ürün başarıyla güncellendi!');
             navigate('/admin/products');
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Ürün güncellenemedi:', error);
-            const errorMessage = error.response?.data?.message || error.message || 'Ürün güncellenirken bir hata oluştu.';
+            const err = error as { 
+                response?: { data?: { message?: string } }; 
+                message?: string 
+            };
+            const errorMessage = err.response?.data?.message || err.message || 'Ürün güncellenirken bir hata oluştu.';
             alert(errorMessage);
         } finally {
             setIsSaving(false);
         }
     };
 
-    const handleChange = (field: keyof FormData, value: any) => {
+    const handleChange = (field: keyof FormData, value: string | number | boolean | string[]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -240,7 +244,7 @@ export default function ProductEditPage() {
         }]);
     };
 
-    const updateVariant = (index: number, field: keyof Variant, value: any) => {
+    const updateVariant = (index: number, field: keyof Variant, value: string | number) => {
         const updated = [...variants];
         updated[index] = { ...updated[index], [field]: value };
         setVariants(updated);

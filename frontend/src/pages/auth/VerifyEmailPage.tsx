@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 import { Mail, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 
 const VerifyEmailPage: React.FC = () => {
