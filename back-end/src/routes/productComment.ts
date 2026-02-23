@@ -14,6 +14,7 @@ import { requireRole } from '../middlewares/role';
 import { validate } from '../middlewares/validate';
 import { createCommentSchema, updateCommentSchema, approveCommentSchema } from '../validators/productComment';
 import { UserRole } from '../../generated/prisma';
+import { commentLimiter } from '../middlewares/rateLimiter';
 
 
 const router = Router();
@@ -76,6 +77,7 @@ router.get('/my/comments', authenticate, getMyComments);
 router.post(
     '/',
     authenticate,
+    commentLimiter,
     validate(createCommentSchema),
     createNewComment
 );

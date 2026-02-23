@@ -17,10 +17,14 @@ import path from 'path';
 import adminStatsRouter from './routes/adminStats';
 import contactRouter from './routes/contact';
 import reviewRouter from './routes/review';
+import { globalLimiter } from './middlewares/rateLimiter';
 dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(globalLimiter);
+
 
 
 app.use(cors({

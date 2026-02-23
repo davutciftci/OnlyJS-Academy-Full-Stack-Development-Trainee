@@ -5,15 +5,16 @@ import { loginSchema, registerSchema, requestPasswordResetSchema, resetPasswordS
 import { validate } from "../middlewares/validate";
 import { UserRole } from '../../generated/prisma';
 import { requireRole } from "../middlewares/role";
+import { authLimiter, authSensitiveLimiter } from "../middlewares/rateLimiter";
 
 const router = Router();
 
-router.post('/register', validate(registerSchema), register);
-router.post('/login', validate(loginSchema), login);
-router.post('/verify-email', verifyEmail);
-router.post('/resend-verification', resendVerification);
-router.post('/forgot-password', validate(requestPasswordResetSchema), requestPasswordResetController);
-router.post('/reset-password', validate(resetPasswordSchema), resetPasswordController);
+router.post('/register', authLimiter, validate(registerSchema), register);
+router.post('/login', authLimiter, validate(loginSchema), login);
+router.post('/verify-email', authSensitiveLimiter, verifyEmail);
+router.post('/resend-verification', authSensitiveLimiter, resendVerification);
+router.post('/forgot-password', authSensitiveLimiter, validate(requestPasswordResetSchema), requestPasswordResetController);
+router.post('/reset-password', authSensitiveLimiter, validate(resetPasswordSchema), resetPasswordController);
 router.get('/profile', authenticate, getProfile);
 router.get('/me', authenticate, getProfile);
 router.patch('/profile', authenticate, validate(updateProfileSchema), updateProfile);

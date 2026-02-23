@@ -4,6 +4,7 @@ import {
     checkPaymentStatus,
     listTestCards,
 } from '../controllers/payment';
+import { paymentLimiter } from '../middlewares/rateLimiter';
 import { authenticate } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { processPaymentSchema } from '../validators/payment';
@@ -16,6 +17,7 @@ router.get('/test-cards', listTestCards);
 router.post(
     '/process',
     authenticate,
+    paymentLimiter,
     validate(processPaymentSchema),
     makePayment
 );

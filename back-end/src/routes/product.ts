@@ -5,12 +5,13 @@ import { authenticate } from "../middlewares/auth";
 import { requireRole } from "../middlewares/role";
 import { validate } from "../middlewares/validate";
 import { createProductSchema, updateProductSchema } from "../validators/product";
+import { searchLimiter } from "../middlewares/rateLimiter";
 
 
 
 const router = Router();
 
-router.get('/search', searchProducts);
+router.get('/search', searchLimiter, searchProducts);
 router.get('/paginated', getPaginatedProductsList)
 router.get("/slug/:slug", getProductBySlug);
 router.get("/", getProducts)
