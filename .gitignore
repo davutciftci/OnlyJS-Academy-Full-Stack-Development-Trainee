@@ -8,6 +8,9 @@ node_modules/
 .env.*.local
 **/.env
 
+# Docker
+docker-compose.yml
+
 # Build outputs
 dist/
 build/

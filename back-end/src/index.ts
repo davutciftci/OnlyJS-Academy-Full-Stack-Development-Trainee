@@ -18,6 +18,7 @@ import adminStatsRouter from './routes/adminStats';
 import contactRouter from './routes/contact';
 import reviewRouter from './routes/review';
 import { globalLimiter } from './middlewares/rateLimiter';
+import { connectRedis } from './config/redis';
 dotenv.config();
 
 const app: Application = express();
@@ -63,6 +64,8 @@ app.get('/health', (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+connectRedis().then(() => {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    });
 });
