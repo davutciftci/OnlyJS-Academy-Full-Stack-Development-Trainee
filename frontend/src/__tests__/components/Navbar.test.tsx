@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import { AuthContext } from '../../context/AuthContextObject';
@@ -53,9 +54,10 @@ describe('Navbar', () => {
     });
 
     it('Kullanıcı giriş yapmadığında "Üye Girişi" linki görünmelidir', async () => {
+        const user = userEvent.setup();
         renderNavbar();
         const accountButton = screen.getByText('HESAP');
-        fireEvent.mouseEnter(accountButton.closest('.relative')!);
+        user.hover(accountButton.closest('.relative')!);
 
         await waitFor(() => {
             expect(screen.getByText('Üye Girişi')).toBeInTheDocument();
@@ -72,30 +74,35 @@ describe('Navbar', () => {
         expect(screen.getByText(/Davut/i)).toBeInTheDocument();
     });
 
-    it('Arama kutusuna yazılan değer ile arama yapılmalıdır', () => {
+    it('Arama kutusuna yazılan değer ile arama yapılmalıdır', async () => {
+        const user = userEvent.setup();
         renderNavbar();
         const searchInput = screen.getByPlaceholderText(/Aradığınız ürünü yazınız/i);
-        fireEvent.change(searchInput, { target: { value: 'protein' } });
-        fireEvent.keyPress(searchInput, { key: 'Enter', code: 13, charCode: 13 });
+        await user.type(searchInput, 'protein');
+        await user.keyboard('{Enter}');
+
+        await waitFor(() => {
+            expect(searchInput).toHaveValue('');
+        });
     });
 
     it('Mobil menü açılıp kapanmalıdır', async () => {
+        const user = userEvent.setup();
         renderNavbar();
         const menuToggle = screen.getAllByLabelText(/Menü/i)[0];
-        fireEvent.click(menuToggle);
+        await user.click(menuToggle);
         
         await waitFor(() => {
             expect(screen.getAllByText(/TÜM ÜRÜNLER/i).length).toBeGreaterThan(0);
-        });
-        
-        fireEvent.click(menuToggle);
+        });       
+        await user.click(menuToggle);
     });
 
-    it('Arama butonuna hover yapıldığında onMouseEnter tetiklenmelidir', () => {
+    it('Arama butonuna hover yapıldığında onMouseEnter tetiklenmelidir', async () => {
+        const user = userEvent.setup();
         renderNavbar();
         const searchButton = screen.getByText('ARA'); 
-        fireEvent.mouseEnter(searchButton);
-        fireEvent.mouseLeave(searchButton);
+        await user.hover(searchButton);
     });
 
     it('Mobil arama kutusuna yazı yazılabilmelidir', () => {
@@ -126,10 +133,11 @@ describe('Navbar', () => {
         expect(loggedInAuth.logout).toHaveBeenCalled();
     });
 
-    it('Sepet ikonu sepeti açmalıdır', () => {
+    it('Sepet ikonu sepeti açmalıdır', async () => {
+        const user = userEvent.setup();
         renderNavbar();
-        const cartButton = screen.getAllByLabelText(/Sepet/i)[0]; // Desktop sürümü
-        fireEvent.click(cartButton);
+        const cartButton = screen.getAllByLabelText(/Sepet/i)[0]; 
+        await user.click(cartButton);
         expect(mockCartContext.openCart).toHaveBeenCalled();
     });
 });
