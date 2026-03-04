@@ -12,7 +12,7 @@
     "emitDecoratorMetadata": false,
     "exactOptionalPropertyTypes": false,
     "strictNullChecks": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
@@ -22,7 +22,8 @@
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
-    ]
+    ],
+    "types": ["node", "jest"]
   },
   "ts-node": {
     "compilerOptions": {
@@ -35,7 +36,8 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "__test__/**/*"
   ],
   "exclude": [
     "node_modules"

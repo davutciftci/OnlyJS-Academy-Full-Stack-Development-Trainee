@@ -1,10 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
 
-// Mock veriler
+
 export const mockUser = {
   id: '1',
   firstName: 'Test',
@@ -23,25 +24,21 @@ export const mockProduct = {
   description: 'Test açıklama',
 };
 
-// Tüm provider'ları içeren sarmalayıcı
-const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          {children}
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
-};
 
 const customRender = (
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options });
+) =>
+  render(ui, {
+    wrapper: ({ children }) => (
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    ),
+    ...options,
+  });
 
-// testing-library/react'ten gelen her şeyi dışa aktar (render hariç)
 export * from '@testing-library/react';
-// default render yerine customRender'ı dışa aktar
 export { customRender as render };

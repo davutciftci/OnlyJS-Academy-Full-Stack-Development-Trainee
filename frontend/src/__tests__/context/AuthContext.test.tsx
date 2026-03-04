@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { authService } from '../../services/authService';
 import type { User, LoginRequest, RegisterRequest } from '../../types';
 
-// authService'i mock'layalım
+
 vi.mock('../../services/authService', () => ({
     authService: {
         getCurrentUser: vi.fn(),
@@ -15,7 +15,7 @@ vi.mock('../../services/authService', () => ({
     },
 }));
 
-// Test bileşeni: Context değerlerini ekrana yazdırır
+
 const TestComponent = () => {
     const { user, isAuthenticated, isLoading, logout } = useAuth();
     if (isLoading) return <div data-testid="loading">Yükleniyor...</div>;

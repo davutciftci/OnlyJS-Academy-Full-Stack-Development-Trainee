@@ -4,7 +4,7 @@ import ReviewModal from '../../components/ReviewModal';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ProductComment } from '../../types/product';
 
-// Use vi.hoisted to ensure we have the exact same references for mocks
+
 const { mockPost, mockPatch } = vi.hoisted(() => ({
     mockPost: vi.fn(),
     mockPatch: vi.fn(),
@@ -21,7 +21,7 @@ vi.mock('../../api/client', () => ({
     getAuthToken: vi.fn(),
 }));
 
-// ReviewModal does not use AuthContext but we mock it for safety or in case of future changes
+
 vi.mock('../../context/AuthContext', () => ({
     useAuth: vi.fn(),
     AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -38,7 +38,7 @@ describe('ReviewModal Bileşeni', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        // Reset implementations to default success
+        
         mockPost.mockReset();
         mockPatch.mockReset();
         mockPost.mockResolvedValue({ data: { status: 'success' } });
@@ -67,11 +67,11 @@ describe('ReviewModal Bileşeni', () => {
         
         render(<ReviewModal {...defaultProps} />);
         
-        // Yıldız seç (3. yıldız)
+        
         const stars = screen.getAllByRole('button').filter(b => b.querySelector('.lucide-star'));
         await user.click(stars[2]);
 
-        // Inputları doldur
+        
         await user.type(screen.getByPlaceholderText(/Örn: Süper, Harika/i), 'Harika Ürün');
         await user.type(screen.getByPlaceholderText(/Ürün hakkındaki düşüncelerinizi paylaşın/i), 'Çok beğendim, tavsiye ederim.');
 
@@ -97,11 +97,11 @@ describe('ReviewModal Bileşeni', () => {
         
         render(<ReviewModal {...defaultProps} />);
         
-        // Formu doldur ve gönder (5. yıldız)
+        
         const stars = screen.getAllByRole('button').filter(b => b.querySelector('.lucide-star'));
         await user.click(stars[4]);
         
-        // Formu doldur (Validation için gerekli)
+        
         await user.type(screen.getByPlaceholderText(/Örn: Süper, Harika/i), 'Test Başlık');
         await user.type(screen.getByPlaceholderText(/Ürün hakkındaki düşüncelerinizi paylaşın/i), 'Test Yorum');
         
@@ -115,11 +115,11 @@ describe('ReviewModal Bileşeni', () => {
         const user = userEvent.setup();
         render(<ReviewModal {...defaultProps} />);
         
-        // Sadece yıldız seç, yorum yazma
+        
         const stars = screen.getAllByRole('button').filter(b => b.querySelector('.lucide-star'));
         await user.click(stars[4]);
         
-        // Submit form directly to bypass HTML validation in JSDOM/userEvent
+        
         const form = screen.getByPlaceholderText(/Örn: Süper, Harika/i).closest('form');
         if (form) fireEvent.submit(form);
 
@@ -164,7 +164,7 @@ describe('ReviewModal Bileşeni', () => {
 
         render(<ReviewModal {...defaultProps} editMode={true} existingComment={existingComment} />);
 
-        // Değişiklik yap
+        
         await user.clear(screen.getByDisplayValue('Eski Başlık'));
         await user.type(screen.getByPlaceholderText(/Örn: Süper, Harika/i), 'Yeni Başlık');
         

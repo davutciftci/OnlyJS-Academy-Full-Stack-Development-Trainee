@@ -55,7 +55,6 @@ describe('Navbar', () => {
     it('Kullanıcı giriş yapmadığında "Üye Girişi" linki görünmelidir', async () => {
         renderNavbar();
         const accountButton = screen.getByText('HESAP');
-        // Dropdown açmak için parent div'e hover yap
         fireEvent.mouseEnter(accountButton.closest('.relative')!);
 
         await waitFor(() => {
@@ -82,10 +81,9 @@ describe('Navbar', () => {
 
     it('Mobil menü açılıp kapanmalıdır', async () => {
         renderNavbar();
-        const menuToggle = screen.getByLabelText(/Menü/i);
+        const menuToggle = screen.getAllByLabelText(/Menü/i)[0];
         fireEvent.click(menuToggle);
         
-        // Çoklu "TÜM ÜRÜNLER" olabilir, getAllByText kullanalım
         await waitFor(() => {
             expect(screen.getAllByText(/TÜM ÜRÜNLER/i).length).toBeGreaterThan(0);
         });
@@ -102,10 +100,9 @@ describe('Navbar', () => {
 
     it('Mobil arama kutusuna yazı yazılabilmelidir', () => {
         renderNavbar();
-        const menuToggle = screen.getByLabelText(/Menü/i);
+        const menuToggle = screen.getAllByLabelText(/Menü/i)[0];
         fireEvent.click(menuToggle);
         
-        // Mobilde placeholder farklı: "ARADIĞINIZ ÜRÜNÜ YAZINIZ."
         const mobileSearch = screen.getByPlaceholderText(/ARADIĞINIZ ÜRÜNÜ YAZINIZ/i); 
         fireEvent.change(mobileSearch, { target: { value: 'creatine' } });
     });

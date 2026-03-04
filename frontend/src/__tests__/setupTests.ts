@@ -3,16 +3,16 @@ import { expect, afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 
-// jest-dom matcher'larını vitest'e ekle
+
 expect.extend(matchers)
 
-// Her testten sonra temizlik yap
+
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
 })
 
-// Global mock'lar
+
 vi.mock('../api/client', () => ({
   apiClient: {
     get: vi.fn(),
@@ -29,5 +29,5 @@ vi.mock('../api/client', () => ({
   getAuthToken: vi.fn(),
 }))
 
-// window.scrollTo mock'u (bazı bileşenlerde gerekebilir)
+
 Object.defineProperty(window, 'scrollTo', { value: vi.fn(), writable: true });

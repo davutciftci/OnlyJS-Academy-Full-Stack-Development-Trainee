@@ -112,7 +112,7 @@ describe('CartContext', () => {
             data: { data: { cart: { items: [{ id: 1, quantity: 1, variantId: 1, variant: { price: 10, product: { name: 'X' } } }] } } }
         });
         render(<AuthProvider><CartProvider><TestComponent /></CartProvider></AuthProvider>);
-        await screen.findByText('Sil');
+        await waitFor(() => expect(screen.getByTestId('items-count')).toHaveTextContent('1'));
         vi.mocked(apiClient.delete).mockRejectedValue(new Error('Delete error'));
         fireEvent.click(screen.getByText('Sil'));
         await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Cart remove failed:', expect.any(Error)));
@@ -126,7 +126,7 @@ describe('CartContext', () => {
             data: { data: { cart: { items: [{ id: 1, quantity: 1, variantId: 1, variant: { price: 10, product: { name: 'X' } } }] } } }
         });
         render(<AuthProvider><CartProvider><TestComponent /></CartProvider></AuthProvider>);
-        await screen.findByText('Artır');
+        await waitFor(() => expect(screen.getByTestId('items-count')).toHaveTextContent('1'));
         vi.mocked(apiClient.put).mockRejectedValue(new Error('Put error'));
         fireEvent.click(screen.getByText('Artır'));
         await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Cart update failed:', expect.any(Error)));
