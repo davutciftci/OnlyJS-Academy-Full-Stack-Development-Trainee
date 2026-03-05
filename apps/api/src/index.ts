@@ -19,6 +19,8 @@ import contactRouter from './routes/contact';
 import reviewRouter from './routes/review';
 import { globalLimiter } from './middlewares/rateLimiter';
 import { connectRedis } from './config/redis';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
 dotenv.config();
 
 const app: Application = express();
@@ -63,6 +65,8 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 app.use(errorHandler);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 connectRedis().then(() => {
     app.listen(PORT, () => {

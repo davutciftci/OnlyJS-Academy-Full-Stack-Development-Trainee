@@ -10,11 +10,55 @@ import { authLimiter, authSensitiveLimiter } from "../middlewares/rateLimiter";
 const router = Router();
 
 router.post('/register', authLimiter, validate(registerSchema), register);
+
+/**
+ * @swagger
+ * /api/user/login:
+ *   post:
+ *     summary: Log in to the application
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *       403:
+ *         description: Email not verified
+ *       401:
+ *         description: Unauthorized
+ */
 router.post('/login', authLimiter, validate(loginSchema), login);
 router.post('/verify-email', authSensitiveLimiter, verifyEmail);
 router.post('/resend-verification', authSensitiveLimiter, resendVerification);
 router.post('/forgot-password', authSensitiveLimiter, validate(requestPasswordResetSchema), requestPasswordResetController);
 router.post('/reset-password', authSensitiveLimiter, validate(resetPasswordSchema), resetPasswordController);
+
+/**
+ * @swagger
+ * /api/user/profile:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile data
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/profile', authenticate, getProfile);
 router.get('/me', authenticate, getProfile);
 router.patch('/profile', authenticate, validate(updateProfileSchema), updateProfile);

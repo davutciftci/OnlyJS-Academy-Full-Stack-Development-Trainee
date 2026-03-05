@@ -2,8 +2,6 @@ import { sendEmail } from '../config/email';
 import { orderCancelledEmail, orderConfirmationEmail, orderShippedEmail, orderConfirmedEmail, orderDeliveredEmail, passwordResetEmail, passwordUpdatedEmail, welcomeEmail, contactFormEmail, verificationEmail } from '../templates/email';
 import { OrderWithRelations } from '../types';
 
-
-
 export const sendWelcomeEmail = async (email: string, firstName: string) => {
     try {
         await sendEmail(email, 'Protein Shop\a Hoş Geldiniz!',
