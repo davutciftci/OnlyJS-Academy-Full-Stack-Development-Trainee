@@ -1,5 +1,5 @@
 import { sendEmail } from '../config/email';
-import { orderCancelledEmail, orderConfirmationEmail, orderShippedEmail, orderConfirmedEmail, orderDeliveredEmail, passwordResetEmail, welcomeEmail, contactFormEmail, verificationEmail } from '../templates/email';
+import { orderCancelledEmail, orderConfirmationEmail, orderShippedEmail, orderConfirmedEmail, orderDeliveredEmail, passwordResetEmail, passwordUpdatedEmail, welcomeEmail, contactFormEmail, verificationEmail } from '../templates/email';
 import { OrderWithRelations } from '../types';
 
 
@@ -17,7 +17,7 @@ export const sendWelcomeEmail = async (email: string, firstName: string) => {
 export const sendOrderConfirmationEmail = async (order: OrderWithRelations) => {
     try {
         await sendEmail(
-            'prtinnn@gmail.com',
+            order.user.email,
             `Siparişiniz Alındı - ${order.orderNumber}`,
             orderConfirmationEmail(order)
         )
@@ -29,7 +29,7 @@ export const sendOrderConfirmationEmail = async (order: OrderWithRelations) => {
 export const sendOrderShippedEmail = async (order: OrderWithRelations) => {
     try {
         await sendEmail(
-            'prtinnn@gmail.com',
+            order.user.email,
             `Siparişiniz Kargoya Verildi - ${order.orderNumber}`,
             orderShippedEmail(order)
         )
@@ -41,7 +41,7 @@ export const sendOrderShippedEmail = async (order: OrderWithRelations) => {
 export const sendOrderCancelledEmail = async (order: OrderWithRelations) => {
     try {
         await sendEmail(
-            'prtinnn@gmail.com',
+            order.user.email,
             `Siparişiniz İptal Edildi - ${order.orderNumber}`,
             orderCancelledEmail(order)
         )
@@ -86,6 +86,18 @@ export const sendPasswordResetEmail = async (email: string, firstName: string, r
     }
 }
 
+export const sendPasswordUpdatedEmail = async (email: string, firstName: string) => {
+    try {
+        await sendEmail(
+            email,
+            `Şifreniz Güncellendi`,
+            passwordUpdatedEmail(firstName)
+        )
+    } catch (error) {
+        console.error('[EmailService] Failed to send password updated email: ', error)
+    }
+}
+
 export const sendContactFormEmail = async (firstName: string, lastName: string, email: string, message: string) => {
     await sendEmail(
         'prtinnn@gmail.com',
@@ -97,7 +109,7 @@ export const sendContactFormEmail = async (firstName: string, lastName: string, 
 export const sendVerificationEmail = async (email: string, firstName: string, code: string) => {
     try {
         await sendEmail(
-            'prtinnn@gmail.com', // Kullanıcı farkılı e-posta ile kayıt olsa da buraya gönderilecek
+            email,
             'E-posta Doğrulama Kodu',
             verificationEmail(firstName, code)
         )

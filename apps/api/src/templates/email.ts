@@ -135,7 +135,7 @@ export const orderConfirmationEmail = (order: OrderWithRelations) => {
       <p>Tel: ${order.shippingAddress.phoneNumber}</p>
     </div>
 
-    <a href="${process.env.FRONTEND_URL}/orders/${order.id}" class="button">
+    <a href="${process.env.FRONTEND_URL}/hesabim?tab=orders" class="button">
       Sipariş Detaylarını Gör
     </a>
 
@@ -157,7 +157,7 @@ export const orderShippedEmail = (order: OrderWithRelations) => {
     </div>
 
     <p>Kargonuzu aşağıdaki linkten takip edebilirsiniz:</p>
-    <a href="${process.env.FRONTEND_URL}/orders/${order.id}" class="button">
+    <a href="${process.env.FRONTEND_URL}/hesabim?tab=orders" class="button">
       Kargonu Takip Et
     </a>
 
@@ -204,7 +204,7 @@ export const orderConfirmedEmail = (order: OrderWithRelations) => {
 
     <p>Siparişiniz hazırlanmaya başlanmıştır. Kargoya verildiğinde bilgilendirileceksiniz.</p>
 
-    <a href="${process.env.FRONTEND_URL}/siparis/${order.id}" class="button">
+    <a href="${process.env.FRONTEND_URL}/hesabim?tab=orders" class="button">
       Sipariş Detaylarını Gör
     </a>
   `;
@@ -224,7 +224,7 @@ export const orderDeliveredEmail = (order: OrderWithRelations) => {
 
     <p>Ürünlerimizi beğendiğinizi umuyoruz! Deneyiminizi bizimle paylaşmak isterseniz yorum bırakabilirsiniz.</p>
 
-    <a href="${process.env.FRONTEND_URL}/siparis/${order.id}" class="button">
+    <a href="${process.env.FRONTEND_URL}/hesabim?tab=orders" class="button">
       Sipariş Detaylarını Gör
     </a>
 
@@ -309,6 +309,30 @@ export const verificationEmail = (firstName: string, code: string) => {
 
     <p>Bu kod <strong>15 dakika</strong> geçerlidir.</p>
     <p>Eğer bu işlemi siz yapmadıysanız lütfen bu e-postayı dikkate almayın.</p>
+  `;
+
+  return baseTemplate(content);
+};
+
+export const passwordUpdatedEmail = (firstName: string) => {
+  const content = `
+    <h2>Şifreniz Güncellendi 🔒</h2>
+    <p>Merhaba ${firstName},</p>
+    <p>Hesabınızın şifresi az önce başarıyla güncellendi.</p>
+    
+    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0; color: #333; font-size: 15px;">
+        Bu işlemi <strong>siz gerçekleştirdiyseniz</strong> herhangi bir işlem yapmanıza gerek yoktur.
+      </p>
+    </div>
+
+    <p style="color: #6c757d; font-size: 14px;">
+      Bu değişikliği <strong>siz yapmadıysanız</strong>, lütfen bizimle hemen iletişime geçin.
+    </p>
+
+    <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" class="button">
+      Hesabınıza Giriş Yapın
+    </a>
   `;
 
   return baseTemplate(content);

@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from '../middlewares/auth';
 import prisma from '../utils/prisma';
 import { NotFoundError } from '../utils/customErrors';
 import jwt from 'jsonwebtoken';
-import { sendVerificationEmail } from '../services/mail';
+import { sendVerificationEmail, sendPasswordUpdatedEmail } from '../services/mail';
 
 interface RegisterRequest {
     firstName: string;
@@ -120,7 +120,13 @@ export const requestPasswordResetController = asyncHandler(async (req: Request, 
 export const resetPasswordController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { token, newPassword } = req.body;
 
-    await resetPasswordService(token, newPassword);
+    const user = await resetPasswordService(token, newPassword);
+
+    if (user) {
+        sendPasswordUpdatedEmail(user.email, user.firstName).catch(err =>
+            console.error('Password updated email failed (resetPassword):', err)
+        );
+    }
 
     return res.status(200).json({
         status: 'success',
@@ -199,6 +205,10 @@ export const changePassword = asyncHandler(async (req: Request, res: Response, n
         where: { id: userId },
         data: { hashedPassword }
     });
+
+    sendPasswordUpdatedEmail(user.email, user.firstName).catch(err =>
+        console.error('Password updated email failed (changePassword):', err)
+    );
 
     return res.status(200).json({
         status: 'success',

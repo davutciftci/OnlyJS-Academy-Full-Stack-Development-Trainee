@@ -101,7 +101,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {
             hashedPassword,
@@ -110,5 +110,5 @@ export const resetPassword = async (token: string, newPassword: string) => {
         }
     });
 
-    return { message: 'Şifreniz başarıyla güncellendi' };
+    return updatedUser;
 }
