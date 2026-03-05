@@ -1,6 +1,20 @@
 {
+  "name": "onlyjs-academy-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"API,WEB\" --prefix-colors \"cyan,magenta\" \"npm run dev --prefix apps/api\" \"npm run dev --prefix apps/web\"",
+    "dev:api": "npm run dev --prefix apps/api",
+    "dev:web": "npm run dev --prefix apps/web",
+    "install:all": "npm install --prefix apps/api && npm install --prefix apps/web",
+    "test": "concurrently --names \"API,WEB\" \"npm run test --prefix apps/api\" \"npm run test --prefix apps/web\"",
+    "test:api": "npm run test --prefix apps/api",
+    "test:web": "npm run test --prefix apps/web",
+    "test:coverage": "concurrently --names \"API,WEB\" \"npm run test:coverage --prefix apps/api\" \"npm run test:coverage --prefix apps/web\""
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "concurrently": "^9.1.2",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6"
   }

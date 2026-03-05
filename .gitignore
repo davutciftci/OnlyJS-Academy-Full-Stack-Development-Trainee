@@ -8,9 +8,6 @@ node_modules/
 .env.*.local
 **/.env
 
-# Docker
-docker-compose.yml
-
 # Build outputs
 dist/
 build/
@@ -40,7 +37,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -57,8 +53,3 @@ Thumbs.db
 # Lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
-
-seo-test-information.md
-frontend-test-information.md
-seo-improvement.md
-coverage-analysis.md
