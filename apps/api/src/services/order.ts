@@ -198,13 +198,17 @@ export const createOrder = async (
         return Math.round(price * (1 - discount / 100));
     };
 
-    const subtotal = cart.items.reduce((total, item) => {
+    const processedCartItems = cart.items.map(item => {
         const originalPrice = Number(item.variant.price);
-        const discount = item.variant.discount;
-        const discountedPrice = calculateDiscountedPrice(originalPrice, discount);
-        return total + (discountedPrice * item.quantity);
-    }, 0);
+        const discountedPrice = calculateDiscountedPrice(originalPrice, item.variant.discount);
+        return {
+            ...item,
+            discountedPrice,
+            itemSubtotal: discountedPrice * item.quantity
+        };
+    });
 
+    const subtotal = processedCartItems.reduce((total, item) => total + item.itemSubtotal, 0);
 
     const shippingMethod = await prisma.shippingMethod.findUnique({
         where: { code: shippingMethodCode }
@@ -244,7 +248,7 @@ export const createOrder = async (
             },
         });
 
-        for (const item of cart.items) {
+        for (const item of processedCartItems) {
             const productSnapshot = {
                 productId: item.variant.product.id,
                 productName: item.variant.product.name,
@@ -257,10 +261,6 @@ export const createOrder = async (
                 variantServings: item.variant.servings,
             };
 
-            const originalPrice = Number(item.variant.price);
-            const discount = item.variant.discount;
-            const discountedPrice = calculateDiscountedPrice(originalPrice, discount);
-
             await tx.orderItem.create({
                 data: {
                     orderId: newOrder.id,
@@ -269,9 +269,9 @@ export const createOrder = async (
                     productName: item.variant.product.name,
                     variantName: item.variant.name,
                     sku: item.variant.sku,
-                    price: discountedPrice,
+                    price: item.discountedPrice,
                     quantity: item.quantity,
-                    subtotal: discountedPrice * item.quantity,
+                    subtotal: item.itemSubtotal,
                     productSnapshot,
                 },
             });
