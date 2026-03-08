@@ -1,10 +1,25 @@
 import multer from "multer";
 import path from "path";
 import { Request } from "express";
+import fs from "fs";
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb) => {
-        cb(null, "uploads/");
+        let dest = "uploads/";
+        
+        if (file.fieldname === 'photo' || file.fieldname === 'photos') {
+             dest = "uploads/products/";
+        } else if (file.fieldname === 'avatar') {
+             dest = "uploads/users/";
+        } else {
+             dest = "uploads/products/"; 
+        }
+
+        if (!fs.existsSync(dest)) {
+            fs.mkdirSync(dest, { recursive: true });
+        }
+
+        cb(null, dest);
     },
 
     filename: (req: Request, file: Express.Multer.File, cb) => {
