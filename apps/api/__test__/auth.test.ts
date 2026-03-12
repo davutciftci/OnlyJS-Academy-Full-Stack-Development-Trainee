@@ -262,7 +262,7 @@ describe('User / Auth Service', () => {
 
             const res = await resetPassword('tok', 'pass');
 
-            expect(res.message).toBe('Şifreniz başarıyla güncellendi');
+            expect((res as any).message).toBe('Şifreniz başarıyla güncellendi');
         });
 
         it('queries findFirst with the token and a future-date expiry filter', async () => {

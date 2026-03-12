@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import { CartProvider } from '../context/CartContext';
+import type { ReactElement } from 'react';
 
 
 export const mockUser = {
