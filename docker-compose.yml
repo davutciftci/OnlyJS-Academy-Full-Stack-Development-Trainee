@@ -40,6 +40,9 @@ services:
         condition: service_healthy
     env_file:
       - ./apps/api/.env
+    environment:
+      DATABASE_URL: postgresql://postgres:104039@postgres:5432/proteinshopbackend
+      REDIS_HOST: redis
     networks:
       - onlyjs-academy
     restart: unless-stopped
