@@ -11,6 +11,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# EC2 gibi düşük RAM ortamlarında Vite build için heap limiti artır
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npm run build
 
 # 2) NGINX ile statik dosya sunumu
