@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   plugins: [
     react(),
     VitePWA({
@@ -113,14 +116,8 @@ export default defineConfig({
     },
     // Optimize chunk size
     chunkSizeWarningLimit: 1000,
-    // Minification
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true, // Remove console.logs in production
-        drop_debugger: true,
-      },
-    },
+    // esbuild: terser'dan daha az RAM kullanır (EC2/düşük RAM için)
+    minify: 'esbuild',
     // Source maps for debugging (disable in production)
     sourcemap: false,
   },
