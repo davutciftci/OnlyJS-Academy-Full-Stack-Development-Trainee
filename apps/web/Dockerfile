@@ -14,7 +14,7 @@ COPY . .
 
 # tsc ve vite ayrı process'te: düşük RAM'de heap birikmesini önler
 RUN npx tsc -b
-ENV NODE_OPTIONS=--max-old-space-size=1024
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npx vite build
 
 # 2) NGINX ile statik dosya sunumu
