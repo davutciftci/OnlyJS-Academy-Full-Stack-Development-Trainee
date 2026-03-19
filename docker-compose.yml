@@ -2,6 +2,8 @@ services:
   redis:
     image: redis:alpine
     container_name: OnlyJsAcademyFullStackDevelopmentTraineeRedis
+    ports:
+      - "6379:6379"
     networks:
       - onlyjs-academy
     healthcheck:
@@ -9,17 +11,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
-  
+
   postgres:
     image: postgres:15
     container_name: OnlyJsAcademyFullStackDevelopmentTraineePostgres
-    env_file:
-      - .env
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "104039"
       POSTGRES_DB: proteinshopbackend
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -29,10 +30,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
-  
+
   api:
-    build: ./apps/api
+    image: davutciftci/onlyjs-api:latest
+    ports:
+      - "3000:3000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -40,37 +42,17 @@ services:
         condition: service_healthy
     env_file:
       - ./apps/api/.env
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:104039@postgres:5432/proteinshopbackend
-      REDIS_HOST: redis
     networks:
       - onlyjs-academy
-    restart: unless-stopped
 
   web:
-    build: ./apps/web
-    depends_on:
-      - api
-    networks:
-      - onlyjs-academy
-    restart: unless-stopped
-
-  nginx:
-    build: ./nginx
+    image: davutciftci/onlyjs-web:latest
     ports:
       - "80:80"
-      - "443:443"
     depends_on:
       - api
-      - web
     networks:
       - onlyjs-academy
-    restart: unless-stopped
-    volumes:
-      - nginx_logs:/var/log/nginx
-      # HTTPS için: domain alındığında certbot volume'unu aç
-      # - certbot_data:/etc/letsencrypt
 
 networks:
   onlyjs-academy:
@@ -79,5 +61,3 @@ networks:
 
 volumes:
   postgres_data:
-  nginx_logs:
-  # certbot_data:
