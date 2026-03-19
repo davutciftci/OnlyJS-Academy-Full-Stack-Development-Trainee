@@ -41,6 +41,7 @@ services:
     env_file:
       - ./apps/api/.env
     environment:
+      NODE_ENV: production
       DATABASE_URL: postgresql://postgres:104039@postgres:5432/proteinshopbackend
       REDIS_HOST: redis
     networks:

@@ -21,6 +21,9 @@ import { globalLimiter } from './middlewares/rateLimiter';
 import { connectRedis } from './config/redis';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import { authenticate } from './middlewares/auth';
+import { requireRole } from './middlewares/role';
+import { UserRole } from '../generated/prisma';
 dotenv.config();
 
 const app: Application = express();
@@ -76,7 +79,13 @@ app.get('/health', (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Swagger: Sadece development'ta açık. Production'da güvenlik için kapalı.
+if (process.env.NODE_ENV !== 'production') {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+} else {
+    // Production'da sadece admin token ile erişim
+    app.use('/api-docs', authenticate, requireRole(UserRole.ADMIN), swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 connectRedis().then(() => {
     app.listen(PORT, () => {
