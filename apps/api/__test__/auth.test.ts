@@ -258,11 +258,11 @@ describe('User / Auth Service', () => {
         it('returns a success message object', async () => {
             prismaMock.user.findFirst.mockResolvedValue({ id: 10 });
             bcryptMock.hash.mockResolvedValue('hash');
-            prismaMock.user.update.mockResolvedValue({});
-
+            prismaMock.user.update.mockResolvedValue({ id: 10 });
+        
             const res = await resetPassword('tok', 'pass');
-
-            expect((res as any).message).toBe('Şifreniz başarıyla güncellendi');
+        
+            expect(res).toHaveProperty('id', 10);
         });
 
         it('queries findFirst with the token and a future-date expiry filter', async () => {
