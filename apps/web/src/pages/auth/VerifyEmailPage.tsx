@@ -65,7 +65,7 @@ const VerifyEmailPage: React.FC = () => {
         try {
             await authService.resendCode(email as string);
             setResendTimer(60); // 1 dakika bekleme süresi
-            setSuccessMessage('Yeni kod e-posta adresinize gönderildi (prtinnn@gmail.com)');
+            setSuccessMessage(`Yeni kod e-posta adresinize gönderildi (${email})`);
         } catch (err: unknown) {
             const errorObj = err as { message?: string };
             setError(errorObj.message || 'Kod gönderilemedi');
@@ -82,7 +82,7 @@ const VerifyEmailPage: React.FC = () => {
                 </div>
                 <h2 className="text-3xl font-extrabold text-gray-900">E-postanızı Doğrulayın</h2>
                 <p className="mt-2 text-sm text-gray-600">
-                    Lütfen <span className="font-semibold text-blue-600">prtinnn@gmail.com</span> adresine gönderilen 6 haneli kodu girin.
+                    Lütfen <span className="font-semibold text-blue-600">{email}</span> adresine gönderilen 6 haneli kodu girin.
                 </p>
             </div>
 

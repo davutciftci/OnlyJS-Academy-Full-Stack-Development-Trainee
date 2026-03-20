@@ -1,4 +1,4 @@
-﻿import { Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../api/client';
@@ -41,12 +41,12 @@ export default function AboutPage() {
     };
 
     const certificates = [
-        '/src/img/anasayfa/certified.png',
-        '/src/img/anasayfa/ghf.png',
-        '/src/img/anasayfa/gmp.png',
-        '/src/img/anasayfa/gıda.iso.png',
-        '/src/img/anasayfa/helal.png',
-        '/src/img/anasayfa/iso.png'
+        '/image/s1.png',
+        '/image/s2.png',
+        '/image/s3.png',
+        '/image/s4.png',
+        '/image/s5.png',
+        '/image/s6.png'
     ];
 
     const getPageNumbers = () => {

@@ -30,7 +30,12 @@ uploads/
 *.webp
 *.svg
 !apps/web/image/
-!apps/web/image/**
+!apps/web/image/*.png
+!apps/web/image/*.jpg
+!apps/web/image/*.gif
+!apps/web/image/*.webp
+!apps/web/image/*.svg
+!apps/web/image/*.zip
 
 # Copy script çıktısı (build sırasında oluşur)
 apps/web/public/image/
