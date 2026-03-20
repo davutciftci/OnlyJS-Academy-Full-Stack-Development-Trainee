@@ -34,10 +34,11 @@ services:
   api:
     image: davutciftci/onlyjs-api:latest
     ports:
-      - "3000:3000"
+      - "${API_PORT:-3000}:3000"
     environment:
       DATABASE_URL: postgresql://postgres:104039@postgres:5432/proteinshopbackend
       FRONTEND_URL: ${FRONTEND_URL:-http://13.61.27.22}
+      REDIS_HOST: redis
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,9 +52,12 @@ services:
       - onlyjs-academy
 
   web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
     image: davutciftci/onlyjs-web:latest
     ports:
-      - "80:80"
+      - "${WEB_PORT:-8080}:80"
     depends_on:
       - api
     networks:
