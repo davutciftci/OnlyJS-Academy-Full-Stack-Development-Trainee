@@ -22,13 +22,18 @@ build/
 uploads/
 **/uploads/
 
-# Image files (uploaded by users)
+# Image files (uploaded by users) - apps/web/image/ hariç (statik site görselleri)
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.webp
 *.svg
+!apps/web/image/
+!apps/web/image/**
+
+# Copy script çıktısı (build sırasında oluşur)
+apps/web/public/image/
 
 # Logs
 logs/

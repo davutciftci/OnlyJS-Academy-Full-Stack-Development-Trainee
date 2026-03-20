@@ -20,7 +20,7 @@ services:
       POSTGRES_PASSWORD: "104039"
       POSTGRES_DB: proteinshopbackend
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -35,6 +35,8 @@ services:
     image: davutciftci/onlyjs-api:latest
     ports:
       - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:104039@postgres:5432/proteinshopbackend
     depends_on:
       postgres:
         condition: service_healthy
@@ -42,6 +44,8 @@ services:
         condition: service_healthy
     env_file:
       - ./apps/api/.env
+    volumes:
+      - api_uploads:/app/uploads
     networks:
       - onlyjs-academy
 
@@ -61,3 +65,4 @@ networks:
 
 volumes:
   postgres_data:
+  api_uploads:

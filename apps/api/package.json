@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "ts-node prisma/seed.ts",
+    "import:images": "ts-node scripts/import-product-images.ts",
     "test": "jest --testPathPattern=__test__",
     "test:coverage": "jest --testPathPattern=__test__ --coverage"
   },

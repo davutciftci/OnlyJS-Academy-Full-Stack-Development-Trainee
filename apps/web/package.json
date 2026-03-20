@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "copy:images": "node scripts/copy-images.js",
+    "predev": "npm run copy:images",
+    "prebuild": "npm run copy:images",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

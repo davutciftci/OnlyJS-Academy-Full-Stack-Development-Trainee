@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { productService } from '../../services/productService';
@@ -10,43 +10,43 @@ const CATEGORY_CARDS = [
     {
         id: 1,
         title: 'PROTEİN',
-        image: '/images/1 871.png',
+        image: '/image/1.png',
         bgColor: 'var(--color-card-bg)',
         link: '/urunler?kategori=protein'
     },
     {
         id: 2,
         title: 'VİTA-\nMİNLER',
-        image: '/images/252.png',
+        image: '/image/2.png',
         bgColor: '#FDE8D7',
         link: '/urunler?kategori=vitamin'
     },
     {
         id: 3,
         title: 'SAĞLIK',
-        image: '/images/3 101.png',
+        image: '/image/3.png',
         bgColor: '#CCCBC6',
         link: '/urunler?kategori=saglik'
     },
     {
         id: 4,
         title: 'SPOR\nGIDALARI',
-        image: '/images/5 101.png',
+        image: '/image/4.png',
         bgColor: '#D9D8D3',
         link: '/urunler?kategori=spor'
     },
     {
         id: 5,
         title: 'GIDA',
-        image: '/images/7 100.png',
+        image: '/image/5.png',
         bgColor: '#72B4CE',
         link: '/urunler?kategori=gida'
     },
     {
         id: 6,
         title: 'TÜM\nÜRÜNLER',
-        image: '/images/Group 11.png',
-        bgColor: '#E8DFD5',
+        image: '/image/6.png',
+        bgColor: '#ABD9EA',
         link: '/urunler'
     }
 ];
@@ -77,7 +77,7 @@ export default function HomePage() {
             <section className="relative">
                 <div className="w-full">
                     <img
-                        src="/images/header.jpg"
+                        src="/image/hero.png"
                         alt="OJS Nutrition - Spor Gıdaları"
                         className="w-full h-full object-cover md:object-contain"
                         style={{ minHeight: '50vh', maxHeight: '100vh', filter: 'brightness(1.2)' }}

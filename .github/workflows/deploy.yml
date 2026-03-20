@@ -57,5 +57,5 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > key.pem
           chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd onlyjs-academy && docker compose pull && docker compose up -d && docker system prune -f"
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "cd onlyjs-academy && git pull origin main && docker compose pull && docker compose up -d && docker system prune -f"
           rm key.pem

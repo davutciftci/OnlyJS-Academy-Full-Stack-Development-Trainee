@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { commentService } from '../../services';
 import type { ProductComment } from '../../types';
@@ -50,7 +50,7 @@ export default function FooterBanner() {
         <section className="w-full mb-24">
             <div className="w-full bg-black">
                 <img
-                    src="/images/Figure → image_1296.webp.png"
+                    src="/image/footer-banner.png"
                     alt="OJS Nutrition Banner"
                     className="w-full h-auto object-cover"
                 />

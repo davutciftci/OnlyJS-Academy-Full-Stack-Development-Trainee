@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Star } from 'lucide-react';
 
@@ -81,9 +81,9 @@ export default function Footer() {
                     <div className="flex flex-col gap-0 md:min-w-[200px]">
                         <div className="h-7 mb-6 flex items-center">
                             <img
-                                src="/images/LOGO_Beyaz.png"
+                                src="/image/Header/LOGO_Siyah.png"
                                 alt="OJS Nutrition"
-                                className="h-7 w-fit object-contain"
+                                className="h-7 w-fit object-contain invert"
                             />
                         </div>
                         <div className="hidden md:block">

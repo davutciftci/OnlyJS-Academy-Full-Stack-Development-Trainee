@@ -66,7 +66,7 @@ export const uploadPhoto = asyncHandler(async (req: Request, res: Response, next
         throw new BadRequestError("Dosya yüklenemedi");
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const fileUrl = `/uploads/products/${req.file.filename}`;
 
     res.status(200).json({
         status: 'success',

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, ChevronDown } from 'lucide-react';
 import { CiFaceSmile } from "react-icons/ci";
@@ -57,7 +57,7 @@ export default function Navbar() {
                         { }
                         <Link to="/" className="flex items-center flex-shrink-0">
                             <img
-                                src="/logo-dark.png"
+                                src="/image/Header/LOGO_Siyah.png"
                                 alt="OJS Nutrition"
                                 className="h-10 md:h-12"
                             />
