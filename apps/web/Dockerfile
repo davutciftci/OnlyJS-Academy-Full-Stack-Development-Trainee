@@ -7,15 +7,15 @@
 
 # 1) Derleme aşaması
 FROM node:20-alpine AS builder
+RUN apk add --no-cache unzip
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 
-# tsc ve vite ayrı process'te: düşük RAM'de heap birikmesini önler
-RUN npx tsc -b
+# npm run build: prebuild (copy:images) + tsc + vite build
 ENV NODE_OPTIONS=--max-old-space-size=2048
-RUN npx vite build
+RUN npm run build
 
 # 2) NGINX ile statik dosya sunumu
 FROM nginx:alpine AS runner
