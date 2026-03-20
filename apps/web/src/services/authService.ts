@@ -2,10 +2,10 @@ import { apiClient, setAuthToken } from '../api/client';
 import { ENDPOINTS } from '../api/endpoints';
 import type { User, LoginRequest, RegisterRequest, AuthResponse } from '../types';
 
-interface ApiErrorResponse {
+export interface ApiErrorResponse {
     status: string;
     message: string;
-    errors?: string[];
+    errors?: { field: string; message: string }[];
 }
 
 export const authService = {
@@ -46,8 +46,10 @@ export const authService = {
         } catch (error: unknown) {
             if (error && typeof error === 'object' && 'response' in error) {
                 const axiosError = error as { response?: { data?: ApiErrorResponse } };
-                const errorMessage = axiosError.response?.data?.message || 'Kayıt başarısız';
-                throw new Error(errorMessage);
+                const data = axiosError.response?.data;
+                const baseMessage = data?.message || 'Kayıt başarısız';
+                const detail = data?.errors?.map((e) => e.message).join('. ');
+                throw new Error(detail ? `${baseMessage}: ${detail}` : baseMessage);
             }
             throw error;
         }

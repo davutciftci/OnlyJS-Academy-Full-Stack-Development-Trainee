@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -18,6 +18,7 @@ export default function RegisterPage() {
         e.preventDefault();
         setError('');
         setIsLoading(true);
+        localStorage.removeItem('verify_email');
 
         try {
             await register({
