@@ -1,8 +1,9 @@
-﻿import { FiTrash } from 'react-icons/fi';
+import { FiTrash } from 'react-icons/fi';
 import { IoClose } from 'react-icons/io5';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { getBackendBaseUrl } from '../../config/api';
 
 export default function CartSidepanel() {
     const { items, isOpen, closeCart, updateQuantity, removeFromCart, totalPrice } = useCart();
@@ -10,7 +11,7 @@ export default function CartSidepanel() {
     const navigate = useNavigate();
 
     const getProductImage = (image: string) => {
-        const BACKEND_BASE_URL = 'http://localhost:3000';
+        const BACKEND_BASE_URL = getBackendBaseUrl();
         if (image) {
             if (image.startsWith('http')) {
                 return image;

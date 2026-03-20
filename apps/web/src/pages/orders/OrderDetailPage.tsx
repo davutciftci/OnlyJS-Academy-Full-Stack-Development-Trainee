@@ -1,10 +1,11 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { VscSettings } from 'react-icons/vsc';
 import { TfiPackage } from 'react-icons/tfi';
 import { CiLocationOn } from 'react-icons/ci';
 import { MessageSquare, Trash2, Edit2 } from 'lucide-react';
 import { apiClient } from '../../api/client';
+import { getBackendBaseUrl } from '../../config/api';
 import ReviewModal from '../../components/ReviewModal';
 
 interface OrderItem {
@@ -141,7 +142,7 @@ export default function OrderDetailPage() {
     }
 
     const getProductImage = (photos?: Array<{ url: string; isPrimary: boolean }>) => {
-        const BACKEND_BASE_URL = 'http://localhost:3000';
+        const BACKEND_BASE_URL = getBackendBaseUrl();
         if (photos && photos.length > 0) {
             const primaryPhoto = photos.find(p => p.isPrimary) || photos[0];
             return `${BACKEND_BASE_URL}${primaryPhoto.url}`;

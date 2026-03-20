@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MdOutlineStar } from 'react-icons/md';
 import DiscountBadge from '../../components/ui/DiscountBadge';
 import { productService } from '../../services/productService';
+import { getBackendBaseUrl } from '../../config/api';
 import type { Product } from '../../types';
 
 export default function ProteinPage() {
@@ -40,7 +41,7 @@ export default function ProteinPage() {
     };
 
     const getProductImage = (product: Product) => {
-        const BACKEND_BASE_URL = 'http://localhost:3000';
+        const BACKEND_BASE_URL = getBackendBaseUrl();
         if (product.photos && product.photos.length > 0) {
             return `${BACKEND_BASE_URL}${product.photos[0].url}`;
         }

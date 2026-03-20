@@ -98,6 +98,13 @@ export default function Navbar() {
                                 onMouseLeave={() => setIsAccountDropdownOpen(false)}
                             >
                                 <button
+                                    onClick={() => {
+                                        if (!isAuthenticated) {
+                                            navigate('/giris');
+                                        } else {
+                                            navigate('/hesabim');
+                                        }
+                                    }}
                                     className="flex flex-col items-center justify-center gap-0.5 border-2 border-gray-400 rounded text-gray-700 transition-colors px-3 py-1"
                                     style={{ color: '#919191', minHeight: '38px' }}
                                     aria-label="Hesap Menüsü"
@@ -324,13 +331,25 @@ export default function Navbar() {
 
                         { }
                         <div className="bg-gray-200 flex flex-col">
-                            <Link
-                                to="/hesabim"
-                                className="px-6 py-4 text-gray-900 hover:bg-gray-300 font-medium"
-                                onClick={toggleMenu}
-                            >
-                                HESABIM
-                            </Link>
+                            {isAuthenticated ? (
+                                <Link
+                                    to="/hesabim"
+                                    className="px-6 py-4 text-gray-900 hover:bg-gray-300 font-medium"
+                                    onClick={toggleMenu}
+                                >
+                                    HESABIM
+                                </Link>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        navigate('/giris');
+                                        toggleMenu();
+                                    }}
+                                    className="w-full text-left px-6 py-4 text-gray-900 hover:bg-gray-300 font-medium"
+                                >
+                                    HESABIM
+                                </button>
+                            )}
                             <Link
                                 to="/yorumlar"
                                 className="px-6 py-4 text-gray-900 hover:bg-gray-300 font-medium"

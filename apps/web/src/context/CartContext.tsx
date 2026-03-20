@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect, type ReactNode } from 'react';
 import { apiClient } from '../api/client';
+import { getBackendBaseUrl } from '../config/api';
 import { CartContext } from './CartContextObject';
 import type { CartUIItem, CartItem } from '../types/cart';
 
@@ -25,7 +26,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         ? Math.round(originalPrice * (1 - discount / 100))
                         : originalPrice;
 
-                    const BACKEND_BASE_URL = 'http://localhost:3000';
+                    const BACKEND_BASE_URL = getBackendBaseUrl();
                     const imageUrl = item.variant.product.photos?.[0]?.url 
                         ? `${BACKEND_BASE_URL}${item.variant.product.photos[0].url}`
                         : '/placeholder.png';

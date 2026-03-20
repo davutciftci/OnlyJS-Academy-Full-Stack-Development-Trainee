@@ -49,7 +49,7 @@ jobs:
           push: true
           tags: davutciftci/onlyjs-web:latest
           build-args: |
-            VITE_API_URL=http://${{ secrets.EC2_HOST }}:3000/api
+            VITE_API_URL=/api
 
   deploy:
     needs: build-and-push

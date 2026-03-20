@@ -1,12 +1,13 @@
-﻿import { FiTrash } from 'react-icons/fi';
+import { FiTrash } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { getBackendBaseUrl } from '../../config/api';
 import type { ProductImageSource } from '../../types';
 
 
 export default function CartPage() {
     const getProductImage = (product: ProductImageSource) => {
-        const BACKEND_BASE_URL = 'http://localhost:3000';
+        const BACKEND_BASE_URL = getBackendBaseUrl();
         if (product.photos && product.photos.length > 0) {
             return `${BACKEND_BASE_URL}${product.photos[0].url}`;
         }

@@ -160,7 +160,7 @@ export default function AccountPage() {
                 requestBody.phoneNumber = formData.phone;
             }
 
-            const response = await fetch('http://localhost:3000/api/user/profile', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/user/profile`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

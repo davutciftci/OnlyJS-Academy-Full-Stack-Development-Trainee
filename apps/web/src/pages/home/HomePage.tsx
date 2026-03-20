@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { productService } from '../../services/productService';
+import { getBackendBaseUrl } from '../../config/api';
 import type { Product } from '../../types';
 
 
@@ -74,13 +75,13 @@ export default function HomePage() {
     return (
         <div className="bg-white">
             { }
-            <section className="relative">
-                <div className="w-full">
+            <section className="relative w-full overflow-hidden">
+                <div className="w-full aspect-[3/1] min-h-[180px]">
                     <img
                         src="/image/hero.png"
                         alt="OJS Nutrition - Spor Gıdaları"
-                        className="w-full h-full object-cover md:object-contain"
-                        style={{ minHeight: '50vh', maxHeight: '100vh', filter: 'brightness(1.2)' }}
+                        className="w-full h-full object-cover object-center"
+                        style={{ filter: 'brightness(1.2)' }}
                     />
                 </div>
             </section>
@@ -134,7 +135,7 @@ export default function HomePage() {
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                             {products.map((product, index) => {
-                                const BACKEND_BASE_URL = 'http://localhost:3000';
+                                const BACKEND_BASE_URL = getBackendBaseUrl();
                                 const productImage = product.photos && product.photos.length > 0
                                     ? `${BACKEND_BASE_URL}${product.photos[0].url}`
                                     : '/images/placeholder-product.jpg';

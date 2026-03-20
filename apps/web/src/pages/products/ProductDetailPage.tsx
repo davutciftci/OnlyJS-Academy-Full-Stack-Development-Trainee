@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ChevronDown, Truck, ShoppingCart } from 'lucide-react';
 import { MdOutlineStar } from 'react-icons/md';
 import { productService } from '../../services/productService';
+import { getBackendBaseUrl } from '../../config/api';
 import { getAromaColor } from '../../constants/productOptions';
 import type { Product, ProductVariant, ProductComment } from '../../types';
 import type { NutritionValue } from '../../types/cart';
@@ -69,7 +70,7 @@ export default function ProductDetailPage() {
             setIsNotFound(false);
             try {
                 const productData = await productService.getProductBySlug(slug);
-                const BACKEND_BASE_URL = 'http://localhost:3000';
+                const BACKEND_BASE_URL = getBackendBaseUrl();
                 const mappedProduct = {
                     ...productData,
                     slug: productData.slug || slug,

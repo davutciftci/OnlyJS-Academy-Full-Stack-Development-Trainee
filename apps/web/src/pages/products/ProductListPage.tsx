@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronDown, Truck, ShoppingCart } from 'lucide-react';
 import { MdOutlineStar } from 'react-icons/md';
 import { productService } from '../../services';
+import { getBackendBaseUrl } from '../../config/api';
 import type { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { BsArrowClockwise } from 'react-icons/bs';
@@ -38,7 +39,7 @@ export default function ProductDetailPage() {
 
             try {
                 const productData = await productService.getProductBySlug(slug);
-                const BACKEND_BASE_URL = 'http://localhost:3000';
+                const BACKEND_BASE_URL = getBackendBaseUrl();
                 const mappedProduct = {
                     ...productData,
                     slug: productData.slug || slug,

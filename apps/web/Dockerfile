@@ -13,8 +13,8 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-# Production'da API URL (örn. http://13.61.27.22:3000/api)
-ARG VITE_API_URL=http://localhost:3000/api
+# Production: /api = relative URL, nginx proxy ile API'ye yönlendirilir (CORS yok)
+ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 
 # npm run build: prebuild (copy:images) + tsc + vite build
@@ -25,11 +25,24 @@ RUN npm run build
 FROM nginx:alpine AS runner
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Opsiyonel: React Router için SPA yönlendirmesi
+# SPA + API proxy: /api ve /uploads backend'e yönlendirilir (aynı origin = CORS yok)
 RUN echo 'server { \
     listen 80; \
     root /usr/share/nginx/html; \
     index index.html; \
+    location /api/ { \
+        proxy_pass http://api:3000; \
+        proxy_http_version 1.1; \
+        proxy_set_header Host $host; \
+        proxy_set_header X-Real-IP $remote_addr; \
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
+    } \
+    location /uploads/ { \
+        proxy_pass http://api:3000; \
+        proxy_http_version 1.1; \
+        proxy_set_header Host $host; \
+    } \
     location / { try_files $uri $uri/ /index.html; } \
     }' > /etc/nginx/conf.d/default.conf
 
