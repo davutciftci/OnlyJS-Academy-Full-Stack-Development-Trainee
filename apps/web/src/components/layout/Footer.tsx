@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Star } from 'lucide-react';
 
 export default function Footer() {
     const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+    const navigate = useNavigate();
 
     const toggleSection = (section: string) => {
         setOpenSections(prev => ({
@@ -14,6 +15,11 @@ export default function Footer() {
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handlePopularProductClick = (slug: string) => {
+        scrollToTop();
+        navigate(`/urun/${slug}`);
     };
 
     const footerLinks = {
@@ -40,15 +46,15 @@ export default function Footer() {
             { name: 'Lansmana Özel Fırsatlar', link: '/urunler?kategori=lansmanaozel' },
         ],
         populerUrunler: [
-            { name: 'Whey Protein', link: '/urun/protein/whey-protein' },
-            { name: 'Cream of Rice', link: '/urun/gida/cream-of-rice' },
-            { name: 'Creatine', link: '/urun/spor-gidalari/creatine' },
-            { name: 'BCAA+', link: '/urun/spor-gidalari/milk-protein' },
-            { name: 'Pre-Workout', link: '/urun/spor-gidalari/pre-workout-supreme' },
-            { name: 'Fitness Paketi', link: '/urun/paketler/fitness-paketi' },
-            { name: 'Collagen', link: '/urun/saglik/collagen-coffee' },
-            { name: 'Günlük Vitamin Paketi', link: '/urun/vitamin/gunluk-vitamin-paketi' },
-            { name: 'ZMA', link: '/urunler?q=zma' },
+            { name: 'Whey Protein', slug: 'whey-protein' },
+            { name: 'Cream of Rice', slug: 'cream-of-rice' },
+            { name: 'Creatine', slug: 'creatine' },
+            { name: 'BCAA+', slug: 'milk-protein' },
+            { name: 'Pre-Workout', slug: 'pre-workout-supreme' },
+            { name: 'Fitness Paketi', slug: 'fitness-paketi' },
+            { name: 'Collagen', slug: 'collagen-coffee' },
+            { name: 'Günlük Vitamin Paketi', slug: 'gunluk-vitamin-paketi' },
+            { name: 'ZMA', slug: 'zma' },
         ]
     };
 
@@ -115,11 +121,15 @@ export default function Footer() {
                     <div className="hidden md:block md:min-w-[200px]">
                         <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider h-7 flex items-center">Popüler Ürünler</h3>
                         <ul className="flex flex-col gap-3">
-                            {footerLinks.populerUrunler.map((link) => (
-                                <li key={link.name}>
-                                    <Link to={link.link} onClick={scrollToTop} className="text-xs text-[#999999] hover:text-white transition-colors uppercase font-medium">
-                                        {link.name}
-                                    </Link>
+                            {footerLinks.populerUrunler.map((item) => (
+                                <li key={item.name}>
+                                    <button
+                                        type="button"
+                                        onClick={() => handlePopularProductClick(item.slug)}
+                                        className="text-xs text-[#999999] hover:text-white transition-colors uppercase font-medium text-left"
+                                    >
+                                        {item.name}
+                                    </button>
                                 </li>
                             ))}
                         </ul>
@@ -178,11 +188,15 @@ export default function Footer() {
                             </button>
                             {openSections['popular'] && (
                                 <ul className="flex flex-col gap-3 pb-6 px-1">
-                                    {footerLinks.populerUrunler.map((link) => (
-                                        <li key={link.name}>
-                                            <Link to={link.link} onClick={scrollToTop} className="text-xs text-[#999999] uppercase">
-                                                {link.name}
-                                            </Link>
+                                    {footerLinks.populerUrunler.map((item) => (
+                                        <li key={item.name}>
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePopularProductClick(item.slug)}
+                                                className="text-xs text-[#999999] uppercase text-left"
+                                            >
+                                                {item.name}
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>

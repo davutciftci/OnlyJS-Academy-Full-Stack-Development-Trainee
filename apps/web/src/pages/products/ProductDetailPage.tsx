@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronDown, Truck, ShoppingCart } from 'lucide-react';
 import { MdOutlineStar } from 'react-icons/md';
@@ -12,8 +12,10 @@ import { BsArrowClockwise } from 'react-icons/bs';
 type ExpandedSection = 'features' | 'nutrition' | 'usage' | null;
 
 export default function ProductDetailPage() {
-    const { slug } = useParams<{ slug: string }>();
+    const params = useParams<{ category?: string; slug: string }>();
+    const slug = params.slug;
     const [product, setProduct] = useState<Product | null>(null);
+    const [isNotFound, setIsNotFound] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [selectedAroma, setSelectedAroma] = useState(0);
     const [selectedSize, setSelectedSize] = useState(0);
@@ -64,6 +66,7 @@ export default function ProductDetailPage() {
         const fetchProduct = async () => {
             if (!slug) return;
 
+            setIsNotFound(false);
             try {
                 const productData = await productService.getProductBySlug(slug);
                 const BACKEND_BASE_URL = 'http://localhost:3000';
@@ -102,11 +105,36 @@ export default function ProductDetailPage() {
             } catch (error) {
                 console.error('Product fetch error:', error);
                 setProduct(null);
+                setIsNotFound(true);
             }
         };
 
         fetchProduct();
     }, [slug]);
+
+    if (isNotFound) {
+        const titleSlug = slug || '';
+        const displayTitle = titleSlug
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+            .join(' ')
+            .toUpperCase();
+        return (
+            <div className="min-h-screen bg-white">
+                <div className="container-custom py-8">
+                    <h1 className="text-3xl font-extrabold text-center text-gray-900 mb-8 uppercase tracking-wide">
+                        {displayTitle || 'ÜRÜN'}
+                    </h1>
+                    <div className="text-center py-12">
+                        <p className="text-gray-500">Ürün bulunamadı</p>
+                    </div>
+                    <div className="text-center text-gray-900 text-sm font-bold m-24">
+                        Toplam 0 ürün görüntüleniyor
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (

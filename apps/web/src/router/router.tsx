@@ -52,6 +52,10 @@ export const router = createBrowserRouter([
                 element: <ProductDetailPage />,
             },
             {
+                path: 'urun/:slug',
+                element: <ProductDetailPage />,
+            },
+            {
                 path: 'urunler',
                 element: <AllProductsPage />,
             },

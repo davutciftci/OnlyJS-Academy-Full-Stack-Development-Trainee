@@ -13,6 +13,10 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
+# Production'da API URL (örn. http://13.61.27.22:3000/api)
+ARG VITE_API_URL=http://localhost:3000/api
+ENV VITE_API_URL=$VITE_API_URL
+
 # npm run build: prebuild (copy:images) + tsc + vite build
 ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npm run build
