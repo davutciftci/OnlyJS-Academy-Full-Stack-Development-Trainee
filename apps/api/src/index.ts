@@ -32,6 +32,18 @@ const PORT = process.env.PORT || 3000;
 // Nginx reverse proxy arkasında X-Forwarded-For header'larını güven
 app.set('trust proxy', 1);
 
+const healthHandler = (req: Request, res: Response) => {
+    res.status(200).json({
+        status: 'success',
+        message: 'Server is running!',
+    });
+};
+// Rate limiter'dan ÖNCE: /health ve /api/health her zaman cevap versin (load balancer / izleme).
+const healthApiRouter = express.Router();
+healthApiRouter.get('/', healthHandler);
+app.use('/api/health', healthApiRouter);
+app.get('/health', healthHandler);
+
 app.use(globalLimiter);
 
 // CORS: FRONTEND_URL env'den okunur (prod: sunucu IP/domain, local: localhost)
@@ -69,13 +81,6 @@ app.use('/api/shipping', shippingRouter);
 app.use('/api/admin/stats', adminStatsRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/contact', contactRouter);
-
-app.get('/health', (req: Request, res: Response) => {
-    res.status(200).json({
-        status: 'success',
-        message: 'Server is running!'
-    });
-});
 
 app.use(errorHandler);
 

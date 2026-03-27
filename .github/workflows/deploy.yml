@@ -55,7 +55,8 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      # EC2_HOST: instance’ın public IPv4 veya buna işaret eden DNS olmalı (10.x private IP Actions’tan ulaşılamaz).
+      # EC2_SSH_KEY: PEM dosyasının base64 çıktısı (ör: macOS: base64 -i key.pem | tr -d '\n')
+      # EC2_HOST: public IPv4 veya DNS
       - name: Prepare SSH key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > key.pem
@@ -68,7 +69,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key_path: key.pem
           port: 22
-          # GitHub runner’dan IPv6 yönlendirmesi sorun çıkarabiliyor; sadece IPv4 kullan.
           protocol: tcp4
           timeout: 120s
           command_timeout: 30m

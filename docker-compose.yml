@@ -32,6 +32,8 @@ services:
       retries: 5
 
   api:
+    # Üretim (EC2) amd64; Mac ARM’de çekince uyarı yerine bilinçli emülasyon
+    platform: linux/amd64
     image: davutciftci/onlyjs-api:latest
     ports:
       - "${API_PORT:-3000}:3000"
@@ -52,6 +54,7 @@ services:
       - onlyjs-academy
 
   web:
+    platform: linux/amd64
     build:
       context: ./apps/web
       dockerfile: Dockerfile
