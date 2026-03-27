@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const expirationDateSchema = z.string({ message: "Son kullanma tarihi metin olmalıdır" })
+    .regex(
+        /^(0[1-9]|1[0-2])\/\d{4}$/,
+        "Son kullanma tarihi MM/YYYY formatında olmalıdır (örn: 09/2027)"
+    );
+
 export const createProductSchema = z.object({
     name: z.string({ message: "Ürün adı zorunludur" })
         .min(2, "Ürün adı en az 2 karakter olmalıdır")
@@ -39,9 +45,7 @@ export const createProductSchema = z.object({
     usage: z.array(z.string(), { message: "Kullanım şekli geçerli bir liste olmalıdır" })
         .optional(),
 
-    expirationDate: z.string({ message: "Son kullanma tarihi geçerli bir tarih olmalıdır" })
-        .optional()
-        .transform((val) => val ? new Date(val) : undefined),
+    expirationDate: expirationDateSchema.optional(),
 
     taxRate: z.number({ message: "KDV oranı geçerli bir sayı olmalıdır" })
         .min(0, "KDV oranı 0 veya daha büyük olmalıdır")

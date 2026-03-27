@@ -11,6 +11,26 @@ interface ProductFilters {
     sortBy?: string;
 }
 
+const parseExpirationDate = (value?: Date | string): Date | undefined => {
+    if (!value) return undefined;
+    if (value instanceof Date) {
+        if (Number.isNaN(value.getTime())) {
+            throw new BadRequestError('Son kullanma tarihi geçersiz');
+        }
+        return value;
+    }
+
+    const monthYearMatch = value.match(/^(0[1-9]|1[0-2])\/(\d{4})$/);
+    if (monthYearMatch) {
+        const month = Number(monthYearMatch[1]);
+        const year = Number(monthYearMatch[2]);
+        // Ay bazlı gelen tarihte ürünün ay sonunu saklıyoruz.
+        return new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
+    }
+
+    throw new BadRequestError('Son kullanma tarihi MM/YYYY formatında olmalıdır');
+};
+
 export const searchAndFilterProducts = async (filters: ProductFilters = {}) => {
     const where: ProductWhereInput = {};
 
@@ -361,7 +381,7 @@ export const createProduct = async (data: {
             features: data.features,
             nutritionInfo: data.nutritionInfo,
             usage: data.usage,
-            expirationDate: data.expirationDate ? new Date(data.expirationDate) : undefined,
+            expirationDate: parseExpirationDate(data.expirationDate),
             taxRate: data.taxRate ?? 20,
             servingSize: data.servingSize,
             ingredients: data.ingredients,
@@ -465,9 +485,7 @@ export const updateProduct = async (
 
     const updateData = {
         ...productData,
-        expirationDate: productData.expirationDate
-            ? new Date(productData.expirationDate)
-            : undefined,
+        expirationDate: parseExpirationDate(productData.expirationDate),
     };
 
     if (variants && variants.length > 0) {

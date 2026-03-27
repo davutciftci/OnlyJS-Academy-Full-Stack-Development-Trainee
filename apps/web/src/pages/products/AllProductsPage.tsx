@@ -141,11 +141,11 @@ export default function AllProductsPage() {
                                         )}
                                     </div>
 
-                                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 text-center min-h-[1.75rem] flex items-center justify-center uppercase">
+                                    <h3 className="text-md sm:text-sm font-bold text-gray-900 text-center min-h-[1.75rem] flex items-center justify-center uppercase">
                                         {product.name}
                                     </h3>
 
-                                    <p className="text-[10px] sm:text-xs text-gray-500 text-center min-h-[1.5rem] flex items-center justify-center leading-tight">
+                                    <p className="text-[12px] sm:text-xs text-gray-500 text-center min-h-[1.5rem] flex items-center justify-center leading-tight">
                                         {product.description || 'Ürün açıklaması'}
                                     </p>
 
@@ -153,19 +153,19 @@ export default function AllProductsPage() {
                                         {[...Array(5)].map((_, i) => (
                                             <MdOutlineStar
                                                 key={i}
-                                                className={`w-3 h-3 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                className={`w-4 h-4 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`}
                                             />
                                         ))}
                                     </div>
 
-                                    <p className="text-[10px] sm:text-xs text-gray-500 text-center mb-2">
+                                    <p className="text-[12px] sm:text-xs text-gray-500 text-center mb-2">
                                         {product.comments?.length || 0} Yorum
                                     </p>
 
                                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                                        <span className="text-sm font-bold text-gray-900">{discountedPrice.toFixed(0)} TL</span>
+                                        <span className="text-md font-bold text-gray-900">{discountedPrice.toFixed(0)} TL</span>
                                         {discount > 0 && (
-                                            <span className="text-xs text-red-500 line-through">{originalPrice.toFixed(0)} TL</span>
+                                            <span className="text-md text-red-500 line-through">{originalPrice.toFixed(0)} TL</span>
                                         )}
                                     </div>
                                 </Link>

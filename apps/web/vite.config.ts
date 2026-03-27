@@ -13,10 +13,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'script',
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module'
       },
-      includeAssets: ['favicon.svg', 'favicon.png', 'logo-dark.png', 'logo-white.png'],
+      includeAssets: ['favicon.svg'],
       manifest: {
         name: 'DC Protein Shop',
         short_name: 'DC Protein',
@@ -35,28 +35,6 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable'
-          },
-          {
-            src: 'favicon.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any'
-          }
-        ],
-        screenshots: [
-          {
-            src: 'logo-dark.png',
-            sizes: '171x38',
-            type: 'image/png',
-            form_factor: 'wide',
-            label: 'DC Protein Shop Desktop'
-          },
-          {
-            src: 'logo-dark.png',
-            sizes: '171x38',
-            type: 'image/png',
-            form_factor: 'narrow',
-            label: 'DC Protein Shop Mobile'
           }
         ]
       },

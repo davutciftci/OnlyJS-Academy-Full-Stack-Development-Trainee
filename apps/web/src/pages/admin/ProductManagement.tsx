@@ -44,6 +44,13 @@ export default function ProductManagement() {
         product.slug.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const formatExpirationDate = (value?: string) => {
+        if (!value) return '-';
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) return '-';
+        return parsed.toLocaleDateString('tr-TR', { month: '2-digit', year: 'numeric' });
+    };
+
     if (isLoading) {
         return <div className="text-center py-8">Yükleniyor...</div>;
     }
@@ -92,6 +99,9 @@ export default function ProductManagement() {
                                     Stok
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Son Kullanma
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Durum
                                 </th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -119,6 +129,11 @@ export default function ProductManagement() {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm text-gray-900">
                                             {product.variants?.reduce((sum, v) => sum + (v.stockCount || 0), 0) || product.stockCount || 0}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900">
+                                            {formatExpirationDate(product.expirationDate)}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">

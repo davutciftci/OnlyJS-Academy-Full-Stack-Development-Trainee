@@ -67,6 +67,8 @@ const AMINO_ACID_NAMES = [
     'Trosin', 'Histidin'
 ];
 
+const EXPIRATION_DATE_REGEX = /^(0[1-9]|1[0-2])\/\d{4}$/;
+
 export default function ProductCreatePage() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>('general');
@@ -134,6 +136,12 @@ export default function ProductCreatePage() {
         }
 
         setIsLoading(true);
+        if (formData.expirationDate && !EXPIRATION_DATE_REGEX.test(formData.expirationDate)) {
+            alert('Son kullanma tarihi MM/YYYY formatında olmalıdır (örn: 09/2027)');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const uploadedPhotos = await Promise.all(
                 photos.map(async (photo) => {
@@ -467,10 +475,11 @@ export default function ProductCreatePage() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Son Kullanma Tarihi</label>
                                 <input
-                                    type="date"
+                                    type="text"
                                     value={formData.expirationDate}
                                     onChange={(e) => handleChange('expirationDate', e.target.value)}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="MM/YYYY (örn: 09/2027)"
                                 />
                             </div>
 

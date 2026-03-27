@@ -55,6 +55,17 @@ const AMINO_ACID_NAMES = [
     'Alanin', 'Arjinin', 'Aspartik Asit', 'Sistein', 'Glutamik Asit', 'Glisin', 'Prolin', 'Serin', 'Tirozin'
 ];
 
+const EXPIRATION_DATE_REGEX = /^(0[1-9]|1[0-2])\/\d{4}$/;
+
+const formatExpirationDateForInput = (value?: string): string => {
+    if (!value) return '';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return '';
+    const month = String(parsed.getMonth() + 1).padStart(2, '0');
+    const year = parsed.getFullYear();
+    return `${month}/${year}`;
+};
+
 export default function ProductEditPage() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
@@ -109,7 +120,7 @@ export default function ProductEditPage() {
                 taxRate: data.taxRate ? Number(data.taxRate) : 20,
                 features: Array.isArray(data.features) ? data.features : [],
                 usage: Array.isArray(data.usage) ? data.usage : [],
-                expirationDate: data.expirationDate ? new Date(data.expirationDate).toISOString().split('T')[0] : '',
+                expirationDate: formatExpirationDateForInput(data.expirationDate),
                 servingSize: data.servingSize || '',
                 ingredients: data.ingredients || '',
             });
@@ -175,6 +186,10 @@ export default function ProductEditPage() {
         }
         if (!formData.slug.trim()) {
             alert('Slug zorunludur');
+            return;
+        }
+        if (formData.expirationDate && !EXPIRATION_DATE_REGEX.test(formData.expirationDate)) {
+            alert('Son kullanma tarihi MM/YYYY formatında olmalıdır (örn: 09/2027)');
             return;
         }
 
@@ -413,10 +428,11 @@ export default function ProductEditPage() {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Son Kullanma Tarihi</label>
                             <input
-                                type="date"
+                                type="text"
                                 value={formData.expirationDate}
                                 onChange={(e) => handleChange('expirationDate', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="MM/YYYY (örn: 09/2027)"
                             />
                         </div>
 
