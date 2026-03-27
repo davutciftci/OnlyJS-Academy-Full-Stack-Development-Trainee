@@ -26,28 +26,7 @@ FROM nginx:alpine AS runner
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # SPA + API proxy: /api ve /uploads backend'e yönlendirilir (aynı origin = CORS yok)
-# resolver + variable: "api" DNS'i startup yerine runtime'da çözümlenir (host not found hatası önlenir)
-RUN echo 'server { \
-    listen 80; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    resolver 127.0.0.11 valid=10s ipv6=off; \
-    set $upstream_api api:3000; \
-    location /api/ { \
-        proxy_pass http://$upstream_api; \
-        proxy_http_version 1.1; \
-        proxy_set_header Host $host; \
-        proxy_set_header X-Real-IP $remote_addr; \
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
-        proxy_set_header X-Forwarded-Proto $scheme; \
-    } \
-    location /uploads/ { \
-        proxy_pass http://$upstream_api; \
-        proxy_http_version 1.1; \
-        proxy_set_header Host $host; \
-    } \
-    location / { try_files $uri $uri/ /index.html; } \
-    }' > /etc/nginx/conf.d/default.conf
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
