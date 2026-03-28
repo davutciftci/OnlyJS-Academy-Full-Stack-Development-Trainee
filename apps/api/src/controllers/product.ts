@@ -9,6 +9,7 @@ import {
     getPaginatedProducts,
 } from '../services/product';
 import { asyncHandler } from '../utils/asyncHandler';
+import { BadRequestError } from '../utils/customErrors';
 
 export const searchProducts = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const filters = {
@@ -154,7 +155,10 @@ export const deleteProductById = asyncHandler(async (
     res: Response,
     next: NextFunction
 ) => {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id < 1) {
+        throw new BadRequestError('Geçersiz ürün ID');
+    }
 
     await deleteProduct(id);
 

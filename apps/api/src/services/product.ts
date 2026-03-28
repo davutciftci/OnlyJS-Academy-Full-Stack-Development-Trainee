@@ -538,12 +538,8 @@ export const updateProduct = async (
 };
 
 export const deleteProduct = async (id: number) => {
-
     await getProductById(id);
-
-    const product = await prisma.product.delete({
+    return prisma.product.delete({
         where: { id },
     });
-
-    return product;
 };

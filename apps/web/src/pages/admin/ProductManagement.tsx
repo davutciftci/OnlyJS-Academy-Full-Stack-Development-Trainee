@@ -33,9 +33,14 @@ export default function ProductManagement() {
         try {
             await adminService.deleteProduct(id);
             await fetchProducts(); // Refresh list
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Ürün silinemedi:', error);
-            alert('Ürün silinirken bir hata oluştu.');
+            const err = error as { response?: { data?: { message?: string } } };
+            const message =
+                err.response?.data?.message ||
+                (error instanceof Error ? error.message : null) ||
+                'Ürün silinirken bir hata oluştu.';
+            alert(message);
         }
     };
 

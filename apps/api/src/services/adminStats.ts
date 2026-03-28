@@ -180,6 +180,7 @@ export const getTopSellingProducts = async (page: number = 1, limit: number = 10
 
     const totalItems = await prisma.orderItem.groupBy({
         by: ['variantId'],
+        where: { variantId: { not: null } },
         _sum: {
             quantity: true,
         },
@@ -190,6 +191,7 @@ export const getTopSellingProducts = async (page: number = 1, limit: number = 10
 
     const topProducts = await prisma.orderItem.groupBy({
         by: ['variantId'],
+        where: { variantId: { not: null } },
         _sum: {
             quantity: true,
             subtotal: true,
