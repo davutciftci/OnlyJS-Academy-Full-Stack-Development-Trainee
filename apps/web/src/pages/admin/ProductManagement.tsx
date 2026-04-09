@@ -33,11 +33,17 @@ export default function ProductManagement() {
         try {
             await adminService.deleteProduct(id);
             await fetchProducts(); // Refresh list
-        } catch (error: unknown) {
+        } catch (error: any) {
             console.error('Ürün silinemedi:', error);
-            const err = error as { response?: { data?: { message?: string } } };
+            
+            // Eğer ürün zaten yoksa (404), listeyi yine de yenile ki ghost silinsin
+            if (error.response?.status === 404) {
+                await fetchProducts();
+                return;
+            }
+
             const message =
-                err.response?.data?.message ||
+                error.response?.data?.message ||
                 (error instanceof Error ? error.message : null) ||
                 'Ürün silinirken bir hata oluştu.';
             alert(message);

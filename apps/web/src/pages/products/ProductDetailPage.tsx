@@ -18,30 +18,13 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState<Product | null>(null);
     const [isNotFound, setIsNotFound] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const [selectedAroma, setSelectedAroma] = useState(0);
-    const [selectedSize, setSelectedSize] = useState(0);
+    /** Tek gerçek kaynak: backend varyant satırı; aroma/boyut tıklanınca tutarlı çift seçilir */
+    const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
     const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
         if (!product) return;
-
-
-        const selectedAromaName = product.aromas?.[selectedAroma]?.name;
-        const selectedSizeWeight = product.sizes?.[selectedSize]?.weight;
-
-        let variant = product.variants?.find(
-            (v: ProductVariant) => v.aroma === selectedAromaName && v.size === selectedSizeWeight
-        );
-        if (!variant) {
-            variant = product.variants?.find((v: ProductVariant) => v.size === selectedSizeWeight);
-        }
-        if (!variant) {
-            variant = product.variants?.find((v: ProductVariant) => v.aroma === selectedAromaName);
-        }
-        if (!variant && product.variants?.length) {
-            variant = product.variants[0];
-        }
 
         const selectedVariant = getSelectedVariant();
         if (!selectedVariant) {
@@ -100,8 +83,7 @@ export default function ProductDetailPage() {
                 };
                 setProduct(mappedProduct);
                 setQuantity(1);
-                setSelectedAroma(0);
-                setSelectedSize(0);
+                setSelectedVariantId(productData.variants?.[0]?.id ?? null);
                 setExpandedSection(null);
             } catch (error) {
                 console.error('Product fetch error:', error);
@@ -161,23 +143,30 @@ export default function ProductDetailPage() {
         setExpandedSection(prev => prev === section ? null : section);
     };
 
-    const getSelectedVariant = () => {
-        if (!product.variants || product.variants.length === 0) return null;
+    const getSelectedVariant = (): ProductVariant | null => {
+        if (!product?.variants?.length) return null;
+        const match = product.variants.find((v) => v.id === selectedVariantId);
+        return match ?? product.variants[0];
+    };
 
-        const selectedAromaName = product.aromas?.[selectedAroma]?.name;
-        const selectedSizeWeight = product.sizes?.[selectedSize]?.weight;
+    const selectVariantByAroma = (aromaName: string) => {
+        if (!product?.variants?.length) return;
+        const cur = getSelectedVariant();
+        const candidates = product.variants.filter((v) => v.aroma === aromaName);
+        if (!candidates.length) return;
+        const match =
+            (cur && candidates.find((v) => v.size === cur.size)) ?? candidates[0];
+        setSelectedVariantId(match.id);
+    };
 
-        let variant = product.variants.find(
-            (v: ProductVariant) => v.aroma === selectedAromaName && v.size === selectedSizeWeight
-        );
-        if (!variant) {
-            variant = product.variants.find((v: ProductVariant) => v.size === selectedSizeWeight);
-        }
-
-        if (!variant) {
-            variant = product.variants.find((v: ProductVariant) => v.aroma === selectedAromaName);
-        }
-        return variant || product.variants[0];
+    const selectVariantBySize = (sizeWeight: string) => {
+        if (!product?.variants?.length) return;
+        const cur = getSelectedVariant();
+        const candidates = product.variants.filter((v) => v.size === sizeWeight);
+        if (!candidates.length) return;
+        const match =
+            (cur && candidates.find((v) => v.aroma === cur.aroma)) ?? candidates[0];
+        setSelectedVariantId(match.id);
     };
     const getVariantServings = () => {
         const variant = getSelectedVariant();
@@ -387,21 +376,26 @@ export default function ProductDetailPage() {
         );
     };
 
-    const AromaSelection = () => (
-        product.aromas && product.aromas.length > 0 && (
+    const AromaSelection = () => {
+        const aromasList = product.aromas ?? [];
+        const curVariant = getSelectedVariant();
+
+        return (
+            aromasList.length > 0 && (
             <div className="mb-6">
                 <p className="text-sm font-bold text-gray-900 mb-3">AROMA:</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2">
-                    {product.aromas.map((aroma, index) => (
+                    {aromasList.map((aroma, index) => (
                         <button
                             key={index}
-                            onClick={() => setSelectedAroma(index)}
-                            className={`relative flex items-center gap-2 px-3 py-2 rounded border-2 transition-all ${selectedAroma === index
+                            type="button"
+                            onClick={() => selectVariantByAroma(aroma.name)}
+                            className={`relative flex items-center gap-2 px-3 py-2 rounded border-2 transition-all ${curVariant?.aroma === aroma.name
                                 ? 'border-gray-800'
                                 : 'border-gray-200 hover:border-gray-300'
                                 }`}
                         >
-                            {selectedAroma === index && (
+                            {curVariant?.aroma === aroma.name && (
                                 <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-900 rounded-full flex items-center justify-center">
                                     <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -417,39 +411,38 @@ export default function ProductDetailPage() {
                     ))}
                 </div>
             </div>
-        )
-    );
+            )
+        );
+    };
 
     const SizeSelection = () => {
+        const sizesList = product.sizes ?? [];
+        const curVariant = getSelectedVariant();
+
         const getSizeDiscount = (sizeWeight: string) => {
-            if (!product.variants || !product.aromas) return 0;
-
-            const selectedAromaName = product.aromas[selectedAroma]?.name;
-
-            const variant = product.variants.find(
-                (v: ProductVariant) => v.aroma === selectedAromaName && v.size === sizeWeight
-            );
-
+            if (!product.variants) return 0;
+            // Try to find variant with current aroma and given size
+            let variant = product.variants.find((v: ProductVariant) => v.size === sizeWeight && v.aroma === curVariant?.aroma);
+            // fallback to first variant with that size
             if (!variant) {
-                const sizeVariant = product.variants.find((v: ProductVariant) => v.size === sizeWeight);
-                return sizeVariant?.discount ? Number(sizeVariant.discount) : 0;
+                variant = product.variants.find((v: ProductVariant) => v.size === sizeWeight);
             }
-
             return variant?.discount ? Number(variant.discount) : 0;
         };
 
-        return product.sizes && product.sizes.length > 0 && (
+        return sizesList.length > 0 && (
             <div className="mb-6">
                 <p className="text-sm font-bold text-gray-900 mb-3">BOYUT:</p>
                 <div className="flex flex-wrap gap-3">
-                    {product.sizes.map((size, index) => {
+                    {sizesList.map((size, index) => {
                         const discount = getSizeDiscount(size.weight);
 
                         return (
                             <button
                                 key={index}
-                                onClick={() => setSelectedSize(index)}
-                                className={`relative px-4 py-3 rounded border-2 transition-all min-w-[100px] ${selectedSize === index
+                                type="button"
+                                onClick={() => selectVariantBySize(size.weight)}
+                                className={`relative px-4 py-3 rounded border-2 transition-all min-w-[100px] ${curVariant?.size === size.weight
                                     ? 'border-gray-800'
                                     : 'border-gray-200 hover:border-gray-300'
                                     }`}
@@ -459,7 +452,7 @@ export default function ProductDetailPage() {
                                         %{discount} İNDİRİM
                                     </span>
                                 )}
-                                {selectedSize === index && (
+                                {curVariant?.size === size.weight && (
                                     <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-900 rounded-full flex items-center justify-center">
                                         <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -539,7 +532,7 @@ export default function ProductDetailPage() {
                                 type="number"
                                 value={quantity}
                                 onChange={handleManualQuantityChange}
-                                className="w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
+                                className="input-no-spinner w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
                                 min="1"
                                 max="10"
                             />
@@ -614,7 +607,7 @@ export default function ProductDetailPage() {
                                     type="number"
                                     value={quantity}
                                     onChange={handleManualQuantityChange}
-                                    className="w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
+                                    className="input-no-spinner w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
                                     min="1"
                                     max="10"
                                 />
@@ -695,9 +688,10 @@ export default function ProductDetailPage() {
                                         -
                                     </button>
                                     <input
+                                        type="number"
                                         value={quantity}
                                         onChange={handleManualQuantityChange}
-                                        className="w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
+                                        className="input-no-spinner w-10 h-10 flex items-center justify-center font-medium border-x border-gray-300 text-center"
                                         min="1"
                                         max="10"
                                     />
@@ -785,19 +779,19 @@ export default function ProductDetailPage() {
                                 const count = ratingCounts[stars - 1];
                                 const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
                                 return (
-                                    <div key={stars} className="flex items-center gap-3">
-                                        <div className="flex items-center gap-0.5 w-20">
+                                    <div key={stars} className="flex items-center gap-4">
+                                        <div className="flex items-center gap-0.5 w-32 shrink-0">
                                             {[...Array(stars)].map((_, i) => (
-                                                <MdOutlineStar key={i} className="w-3 h-3 text-yellow-400" />
+                                                <MdOutlineStar key={i} className="w-6 h-6 text-yellow-400" />
                                             ))}
                                         </div>
-                                        <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                                        <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full bg-[#2126AB] rounded-full"
                                                 style={{ width: `${percent}%` }}
                                             />
                                         </div>
-                                        <span className="text-xs text-gray-600 w-12 text-right">{count}</span>
+                                        <span className="text-sm text-gray-600 w-14 text-right tabular-nums">{count}</span>
                                     </div>
                                 );
                             });

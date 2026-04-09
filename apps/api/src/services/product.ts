@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma';
 import { ConflictError, NotFoundError, BadRequestError } from '../utils/customErrors';
 import { ProductWhereInput, ProductOrderByInput } from '../types';
+import { buildVariantSelectionMatrix } from './productVariant';
 
 interface ProductFilters {
     search?: string;
@@ -312,7 +313,10 @@ export const getProductBySlugService = async (slug: string) => {
         throw new NotFoundError('Ürün bulunamadı');
     }
 
-    return product;
+    return {
+        ...product,
+        variantSelection: buildVariantSelectionMatrix(product.variants),
+    };
 };
 
 export const createProduct = async (data: {

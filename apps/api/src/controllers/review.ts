@@ -21,7 +21,7 @@ export const createReviewController = asyncHandler(async (
     );
 
     // 10 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=600');
+    //res.setHeader('Cache-Control', 'public, max-age=600');
 
     res.status(201).json({
         status: 'success',
@@ -42,7 +42,7 @@ export const getProductReviewsController = asyncHandler(async (
     const result = await reviewService.getProductReviews(productId, page, limit);
 
     // 10 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=600');
+    //res.setHeader('Cache-Control', 'public, max-age=600');
 
     res.status(200).json({
         status: 'success',

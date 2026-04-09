@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star } from 'lucide-react';
+import DiscountBadge from '../../components/ui/DiscountBadge';
 import { productService } from '../../services/productService';
 import { getBackendBaseUrl } from '../../config/api';
 import type { Product } from '../../types';
@@ -160,24 +161,24 @@ export default function HomePage() {
                                         className="group flex flex-col"
                                         style={{ order: index }}
                                     >
-                                        <div className="relative aspect-square rounded-sm mb-4 overflow-hidden">
+                                        <div className="relative aspect-square mb-2 rounded-lg">
                                             <img
                                                 src={productImage}
                                                 alt={product.name}
-                                                className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                                                className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                                             />
                                             {maxDiscount > 0 && (
-                                                <div className="absolute top-0 right-0 bg-[#FF2D2D] text-white p-2 text-center leading-none">
-                                                    <div className="text-[10px] font-bold">%{maxDiscount}</div>
-                                                    <div className="text-[8px] font-medium">İNDİRİM</div>
-                                                </div>
+                                                <DiscountBadge
+                                                    percentage={maxDiscount}
+                                                    className="absolute -top-2 -right-2 md:top-2 md:right-2 group-hover:scale-105 transition-transform duration-300"
+                                                />
                                             )}
                                         </div>
                                         <div className="text-center flex flex-col items-center">
-                                            <h3 className="text-sm font-bold text-gray-900 mb-1 leading-tight uppercase h-10 flex items-center justify-center">
+                                            <h3 className="text-xl sm:text-xl font-bold text-gray-900 leading-tight uppercase h-10 flex items-center justify-center">
                                                 {product.name}
                                             </h3>
-                                            <p className="text-[10px] text-gray-500 mb-2 leading-tight uppercase h-8 flex items-center justify-center">
+                                            <p className="text-md sm:text-md text-gray-500 leading-tight uppercase h-8 flex items-center justify-center">
                                                 {product.description || 'Ürün açıklaması'}
                                             </p>
                                             <div className="flex items-center gap-0.5 mb-1">
@@ -188,7 +189,7 @@ export default function HomePage() {
                                                     />
                                                 ))}
                                             </div>
-                                            <span className="text-[10px] text-gray-500 mb-2">
+                                            <span className="text-sm sm:text-sm text-gray-500 mb-2">
                                                 {product.comments?.length || 0} Yorum
                                             </span>
                                             <div className="flex flex-row items-baseline gap-2 justify-center">
@@ -196,7 +197,7 @@ export default function HomePage() {
                                                     {Number(discountedPrice).toFixed(0)} TL
                                                 </span>
                                                 {maxDiscount > 0 && (
-                                                    <span className="text-sm text-red-500 line-through">
+                                                    <span className="text-lg text-red-500 line-through">
                                                         {Number(originalPrice).toFixed(0)} TL
                                                     </span>
                                                 )}

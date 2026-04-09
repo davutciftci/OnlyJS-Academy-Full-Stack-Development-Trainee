@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRouter from './routes/user';
@@ -64,6 +64,15 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Global No-Cache Middleware: Tarayıcı disk cache (stale data) sorununu kesin çözmek için
+app.use((req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
 const uploadsPath = path.join(process.cwd(), "uploads");
 app.use('/uploads', express.static(uploadsPath));
 

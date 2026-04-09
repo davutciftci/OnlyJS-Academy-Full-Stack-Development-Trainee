@@ -136,16 +136,16 @@ export default function AllProductsPage() {
                                         {discount > 0 && (
                                             <DiscountBadge
                                                 percentage={discount}
-                                                className="absolute -top-2 -right-2 md:top-2 md:right-2"
+                                                className="absolute -top-2 -right-2 md:top-2 md:right-2 group-hover:scale-105 transition-transform duration-300"
                                             />
                                         )}
                                     </div>
 
-                                    <h3 className="text-md sm:text-sm font-bold text-gray-900 text-center min-h-[1.75rem] flex items-center justify-center uppercase">
+                                    <h3 className="text-xl sm:text-xl font-bold text-gray-900 text-center min-h-[1.75rem] flex items-center justify-center uppercase">
                                         {product.name}
                                     </h3>
 
-                                    <p className="text-[12px] sm:text-xs text-gray-500 text-center min-h-[1.5rem] flex items-center justify-center leading-tight">
+                                    <p className="text-lg sm:text-lg text-gray-500 text-center uppercase min-h-[1.85rem] flex items-center justify-center leading-tight">
                                         {product.description || 'Ürün açıklaması'}
                                     </p>
 
@@ -153,19 +153,19 @@ export default function AllProductsPage() {
                                         {[...Array(5)].map((_, i) => (
                                             <MdOutlineStar
                                                 key={i}
-                                                className={`w-4 h-4 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                className={`w-5 h-5 ${i < 5 ? 'text-yellow-400' : 'text-gray-300'}`}
                                             />
                                         ))}
                                     </div>
 
-                                    <p className="text-[12px] sm:text-xs text-gray-500 text-center mb-2">
+                                    <p className="text-sm sm:text-sm text-gray-500 text-center mb-2">
                                         {product.comments?.length || 0} Yorum
                                     </p>
 
                                     <div className="flex items-center justify-center gap-2 flex-wrap">
-                                        <span className="text-md font-bold text-gray-900">{discountedPrice.toFixed(0)} TL</span>
+                                        <span className="text-xl font-bold text-gray-900">{discountedPrice.toFixed(0)} TL</span>
                                         {discount > 0 && (
-                                            <span className="text-md text-red-500 line-through">{originalPrice.toFixed(0)} TL</span>
+                                            <span className="text-xl text-red-500 line-through">{originalPrice.toFixed(0)} TL</span>
                                         )}
                                     </div>
                                 </Link>

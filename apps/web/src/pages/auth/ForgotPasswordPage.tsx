@@ -1,14 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
+        if (!turnstileToken) {
+            setError('Lütfen güvenlik doğrulamasını tamamlayın.');
+            return;
+        }
+
         setError('');
         setMessage('');
         setIsLoading(true);
@@ -19,7 +27,10 @@ export default function ForgotPasswordPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ 
+                    email,
+                    'cf-turnstile-response': turnstileToken
+                }),
             });
 
             const data = await response.json();
@@ -84,6 +95,15 @@ export default function ForgotPasswordPage() {
                             className="w-full px-4 py-3 border border-gray-200 rounded-[4px] bg-gray-100 text-sm focus:outline-none focus:border-gray-300"
                             required
                             disabled={isLoading}
+                        />
+                    </div>
+
+                    <div className="flex justify-center py-2">
+                        <Turnstile
+                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || ''}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                            onExpire={() => setTurnstileToken(null)}
+                            onError={() => setTurnstileToken(null)}
                         />
                     </div>
 

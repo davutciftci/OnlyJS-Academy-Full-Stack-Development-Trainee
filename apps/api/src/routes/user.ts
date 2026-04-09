@@ -7,9 +7,11 @@ import { UserRole } from '../../generated/prisma';
 import { requireRole } from "../middlewares/role";
 import { authLimiter, authSensitiveLimiter } from "../middlewares/rateLimiter";
 
+import { validateTurnstile } from "../middlewares/turnstile";
+
 const router = Router();
 
-router.post('/register', authLimiter, validate(registerSchema), register);
+router.post('/register', authLimiter, validate(registerSchema), validateTurnstile, register);
 
 /**
  * @swagger
@@ -39,10 +41,10 @@ router.post('/register', authLimiter, validate(registerSchema), register);
  *       401:
  *         description: Unauthorized
  */
-router.post('/login', authLimiter, validate(loginSchema), login);
+router.post('/login', authLimiter, validate(loginSchema), validateTurnstile, login);
 router.post('/verify-email', authSensitiveLimiter, verifyEmail);
 router.post('/resend-verification', authSensitiveLimiter, resendVerification);
-router.post('/forgot-password', authSensitiveLimiter, validate(requestPasswordResetSchema), requestPasswordResetController);
+router.post('/forgot-password', authSensitiveLimiter, validate(requestPasswordResetSchema), validateTurnstile, requestPasswordResetController);
 router.post('/reset-password', authSensitiveLimiter, validate(resetPasswordSchema), resetPasswordController);
 
 /**

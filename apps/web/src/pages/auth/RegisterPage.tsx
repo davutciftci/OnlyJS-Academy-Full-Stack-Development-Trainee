@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function RegisterPage() {
     const [firstName, setFirstName] = useState('');
@@ -10,12 +11,19 @@ export default function RegisterPage() {
     const [birth_date, setBirthDate] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
     const { register } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!turnstileToken) {
+            setError('Lütfen güvenlik doğrulamasını tamamlayın.');
+            return;
+        }
+
         setError('');
         setIsLoading(true);
         localStorage.removeItem('verify_email');
@@ -27,6 +35,7 @@ export default function RegisterPage() {
                 email,
                 password,
                 birth_date,
+                'cf-turnstile-response': turnstileToken
             });
             localStorage.setItem('verify_email', email);
             navigate('/dogrula', { state: { email } });
@@ -137,6 +146,15 @@ export default function RegisterPage() {
                                 required
                                 minLength={6}
                                 disabled={isLoading}
+                            />
+                        </div>
+
+                        <div className="flex justify-center py-2">
+                            <Turnstile
+                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || ''}
+                                onSuccess={(token) => setTurnstileToken(token)}
+                                onExpire={() => setTurnstileToken(null)}
+                                onError={() => setTurnstileToken(null)}
                             />
                         </div>
 

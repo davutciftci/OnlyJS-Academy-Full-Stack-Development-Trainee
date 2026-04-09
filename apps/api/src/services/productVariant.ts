@@ -1,6 +1,41 @@
 import prisma from '../utils/prisma';
 import { ConflictError, NotFoundError, BadRequestError } from '../utils/customErrors';
 
+/** Slug/detay API’sinde aroma–boyut seçeneklerini istemciye net vermek için (cartesian hayali kombinasyonları önler). */
+export type VariantMatrixInput = {
+    id: number;
+    aroma: string | null;
+    size: string | null;
+};
+
+export type VariantSelectionMatrix = {
+    sizesByAroma: Record<string, string[]>;
+    aromasBySize: Record<string, string[]>;
+};
+
+export function buildVariantSelectionMatrix(variants: VariantMatrixInput[]): VariantSelectionMatrix {
+    const sizesByAroma: Record<string, Set<string>> = {};
+    const aromasBySize: Record<string, Set<string>> = {};
+
+    for (const v of variants) {
+        if (v.aroma == null || v.size == null || v.aroma === '' || v.size === '') continue;
+        if (!sizesByAroma[v.aroma]) sizesByAroma[v.aroma] = new Set();
+        sizesByAroma[v.aroma].add(v.size);
+        if (!aromasBySize[v.size]) aromasBySize[v.size] = new Set();
+        aromasBySize[v.size].add(v.aroma);
+    }
+
+    const sortArr = (s: Set<string>) => [...s].sort();
+
+    return {
+        sizesByAroma: Object.fromEntries(
+            Object.entries(sizesByAroma).map(([k, v]) => [k, sortArr(v)])
+        ),
+        aromasBySize: Object.fromEntries(
+            Object.entries(aromasBySize).map(([k, v]) => [k, sortArr(v)])
+        ),
+    };
+}
 
 export const getVariantsByProductId = async (productId: number) => {
     const product = await prisma.product.findUnique({

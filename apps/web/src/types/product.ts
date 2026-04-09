@@ -92,6 +92,11 @@ export interface Product {
     createdAt: string;
     updatedAt: string;
     variants?: ProductVariant[];
+    /** API (slug): aroma→boyut ve boyut→aroma eşlemesi; gerçek varyant çiftleri */
+    variantSelection?: {
+        sizesByAroma: Record<string, string[]>;
+        aromasBySize: Record<string, string[]>;
+    };
     photos?: ProductPhoto[];
     comments?: ProductComment[];
 

@@ -336,6 +336,7 @@ export const updateOrderStatus = async (
 
         await prisma.$transaction(async (tx) => {
             for (const item of order.items) {
+                if (item.variantId === null) continue;
                 await tx.productVariant.update({
                     where: { id: item.variantId },
                     data: {

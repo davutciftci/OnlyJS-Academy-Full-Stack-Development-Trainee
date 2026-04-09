@@ -1,23 +1,35 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
+        if (!turnstileToken) {
+            setError('Lütfen güvenlik doğrulamasını tamamlayın.');
+            return;
+        }
+
         setError('');
         setIsLoading(true);
 
         try {
-            await login({ email, password });
+            await login({ 
+                email, 
+                password, 
+                'cf-turnstile-response': turnstileToken 
+            });
 
             const { authService } = await import('../../services/authService');
             const currentUser = await authService.getCurrentUser();
@@ -97,6 +109,15 @@ export default function LoginPage() {
                         <Link to="/sifremi-unuttum" className="text-xs text-gray-600 hover:text-gray-900 underline">
                             Şifremi Unuttum?
                         </Link>
+                    </div>
+
+                    <div className="flex justify-center py-2">
+                        <Turnstile
+                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || ''}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                            onExpire={() => setTurnstileToken(null)}
+                            onError={() => setTurnstileToken(null)}
+                        />
                     </div>
 
                     <button

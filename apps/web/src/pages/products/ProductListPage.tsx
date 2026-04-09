@@ -4,9 +4,10 @@ import { ChevronDown, Truck, ShoppingCart } from 'lucide-react';
 import { MdOutlineStar } from 'react-icons/md';
 import { productService } from '../../services';
 import { getBackendBaseUrl } from '../../config/api';
-import type { Product } from '../../types';
+import type { Product, ProductVariant } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { BsArrowClockwise } from 'react-icons/bs';
+import { buildVariantSelectionMatrix } from '../../utils/variantMatrix';
 
 type ExpandedSection = 'features' | 'nutrition' | 'usage' | null;
 
@@ -14,22 +15,28 @@ export default function ProductDetailPage() {
     const { slug } = useParams<{ slug: string }>();
     const [product, setProduct] = useState<Product | null>(null);
     const [quantity, setQuantity] = useState(1);
-    const [selectedAroma, setSelectedAroma] = useState(0);
-    const [selectedSize, setSelectedSize] = useState(0);
+    const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
     const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
         if (!product) return;
-
+        const v = getSelectedVariant();
+        if (!v) {
+            alert('Lütfen bir varyant seçin');
+            return;
+        }
         addToCart({
             id: product.id,
+            variantId: v.id,
             name: product.name,
             description: product.description || '',
-            price: product.price,
+            price: getDiscountedVariantPrice(),
             image: product.image || '',
-            aroma: product.aromas?.[selectedAroma]?.name,
-            size: product.sizes?.[selectedSize]?.weight,
+            aroma: v.aroma || undefined,
+            size: v.size || undefined,
+            slug: product.slug,
+            categorySlug: product.category?.slug,
         });
     };
 
@@ -71,8 +78,7 @@ export default function ProductDetailPage() {
                 };
                 setProduct(mappedProduct as any);
                 setQuantity(1);
-                setSelectedAroma(0);
-                setSelectedSize(0);
+                setSelectedVariantId(productData.variants?.[0]?.id ?? null);
                 setExpandedSection(null);
             } catch (error) {
                 console.error('Product fetch error:', error);
@@ -100,6 +106,41 @@ export default function ProductDetailPage() {
 
     const toggleSection = (section: ExpandedSection) => {
         setExpandedSection(prev => prev === section ? null : section);
+    };
+
+    const getSelectedVariant = (): ProductVariant | null => {
+        if (!product?.variants?.length) return null;
+        const match = product.variants.find((v) => v.id === selectedVariantId);
+        return match ?? product.variants[0];
+    };
+
+    const selectVariantByAroma = (aromaName: string) => {
+        if (!product?.variants?.length) return;
+        const cur = getSelectedVariant();
+        const candidates = product.variants.filter((v) => v.aroma === aromaName);
+        if (!candidates.length) return;
+        const match =
+            (cur && candidates.find((v) => v.size === cur.size)) ?? candidates[0];
+        setSelectedVariantId(match.id);
+    };
+
+    const selectVariantBySize = (sizeWeight: string) => {
+        if (!product?.variants?.length) return;
+        const cur = getSelectedVariant();
+        const candidates = product.variants.filter((v) => v.size === sizeWeight);
+        if (!candidates.length) return;
+        const match =
+            (cur && candidates.find((v) => v.aroma === cur.aroma)) ?? candidates[0];
+        setSelectedVariantId(match.id);
+    };
+
+    const getDiscountedVariantPrice = () => {
+        const v = getSelectedVariant();
+        if (!v) return product.price;
+        const original = v.price;
+        const d = v.discount && v.discount > 0 ? Number(v.discount) : 0;
+        if (d > 0) return Math.round(original * (1 - d / 100));
+        return original;
     };
 
     const ExpandableSections = () => (
@@ -214,7 +255,7 @@ export default function ProductDetailPage() {
             <h1 className="text-2xl font-bold text-gray-900 mb-1">{product.name}</h1>
 
             { }
-            <p className="text-sm text-gray-500 mb-2">{product.description}</p>
+            <p className="text-base text-gray-500 mb-2">{product.description}</p>
 
             { }
             <div className="flex items-center gap-2 mb-4">
@@ -222,11 +263,11 @@ export default function ProductDetailPage() {
                     {[...Array(5)].map((_, i) => (
                         <MdOutlineStar
                             key={i}
-                            className={`w-4 h-4 ${i < (product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                            className={`w-5 h-5 ${i < (product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                         />
                     ))}
                 </div>
-                <span className="text-sm font-bold text-gray-900">
+                <span className="text-base font-bold text-gray-900">
                     {(product.reviews || 0).toLocaleString('tr-TR')} Yorum
                 </span>
             </div>
@@ -247,21 +288,32 @@ export default function ProductDetailPage() {
         </>
     );
 
-    const AromaSelection = () => (
-        product.aromas && product.aromas.length > 0 && (
+    const AromaSelection = () => {
+        const matrix =
+            product.variantSelection ?? buildVariantSelectionMatrix(product.variants);
+        const cur = getSelectedVariant();
+        const allowedBySize = cur?.size ? matrix.aromasBySize[cur.size] : undefined;
+        const aromasList =
+            allowedBySize && allowedBySize.length > 0
+                ? (product.aromas ?? []).filter((a) => allowedBySize.includes(a.name))
+                : (product.aromas ?? []);
+
+        return (
+            aromasList.length > 0 && (
             <div className="mb-6">
                 <p className="text-sm font-bold text-gray-900 mb-3">AROMA:</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-2">
-                    {product.aromas?.map((aroma, index) => (
+                    {aromasList.map((aroma, index) => (
                         <button
                             key={index}
-                            onClick={() => setSelectedAroma(index)}
-                            className={`relative flex items-center gap-2 px-3 py-2 rounded border-2 transition-all ${selectedAroma === index
+                            type="button"
+                            onClick={() => selectVariantByAroma(aroma.name)}
+                            className={`relative flex items-center gap-2 px-3 py-2 rounded border-2 transition-all ${getSelectedVariant()?.aroma === aroma.name
                                 ? 'border-gray-800'
                                 : 'border-gray-200 hover:border-gray-300'
                                 }`}
                         >
-                            {selectedAroma === index && (
+                            {getSelectedVariant()?.aroma === aroma.name && (
                                 <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-900 rounded-full flex items-center justify-center">
                                     <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -277,28 +329,41 @@ export default function ProductDetailPage() {
                     ))}
                 </div>
             </div>
-        )
-    );
+            )
+        );
+    };
 
-    const SizeSelection = () => (
+    const SizeSelection = () => {
+        const matrix =
+            product.variantSelection ?? buildVariantSelectionMatrix(product.variants);
+        const cur = getSelectedVariant();
+        const allowedByAroma = cur?.aroma ? matrix.sizesByAroma[cur.aroma] : undefined;
+        const sizesList =
+            allowedByAroma && allowedByAroma.length > 0
+                ? (product.sizes ?? []).filter((s) => allowedByAroma.includes(s.weight))
+                : (product.sizes ?? []);
+
+        return (
+        sizesList.length > 0 && (
         <div className="mb-6">
             <p className="text-sm font-bold text-gray-900 mb-3">BOYUT:</p>
             <div className="flex flex-wrap gap-3">
-                {product.sizes?.map((size, index) => (
+                {sizesList.map((size, index) => (
                     <button
                         key={index}
-                        onClick={() => setSelectedSize(index)}
-                        className={`relative px-4 py-3 rounded border-2 transition-all min-w-[100px] ${selectedSize === index
+                        type="button"
+                        onClick={() => selectVariantBySize(size.weight)}
+                        className={`relative px-4 py-3 rounded border-2 transition-all min-w-[100px] ${getSelectedVariant()?.size === size.weight
                             ? 'border-gray-800'
                             : 'border-gray-200 hover:border-gray-300'
                             }`}
                     >
-                        {size.discount && (
+                        {size.discount ? (
                             <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#ef0000] text-white text-[10px] font-bold px-2 pb-0.5 rounded whitespace-nowrap mb-2">
                                 %{size.discount} İNDİRİM
                             </span>
-                        )}
-                        {selectedSize === index && (
+                        ) : null}
+                        {getSelectedVariant()?.size === size.weight && (
                             <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-900 rounded-full flex items-center justify-center">
                                 <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -311,7 +376,9 @@ export default function ProductDetailPage() {
                 ))}
             </div>
         </div>
-    );
+        )
+        );
+    };
 
     return (
         <div className="bg-white min-h-screen">
@@ -339,8 +406,8 @@ export default function ProductDetailPage() {
 
                     { }
                     <div className="flex items-baseline justify-between mb-4">
-                        <span className="text-3xl font-bold text-gray-900">{product.price} TL</span>
-                        <span className="text-sm font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
+                        <span className="text-4xl font-bold text-gray-900">{getDiscountedVariantPrice()} TL</span>
+                        <span className="text-base font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
                     </div>
 
                     { }
@@ -435,13 +502,13 @@ export default function ProductDetailPage() {
                                     +
                                 </button>
                             </div>
-                            <span className="text-2xl font-bold text-gray-900">{product.price} TL</span>
+                            <span className="text-3xl font-bold text-gray-900">{getDiscountedVariantPrice()} TL</span>
                         </div>
 
                         { }
                         <div className="flex flex-col">
                             <div className="flex justify-end mb-2">
-                                <span className="text-sm font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
+                                <span className="text-base font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
                             </div>
                             <button onClick={handleAddToCart} className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded transition-colors">
                                 <ShoppingCart className="w-5 h-5" />
@@ -480,8 +547,8 @@ export default function ProductDetailPage() {
 
                             { }
                             <div className="flex items-baseline justify-between mb-4">
-                                <span className="text-3xl font-bold text-gray-900">{product.price} TL</span>
-                                <span className="text-sm font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
+                                <span className="text-4xl font-bold text-gray-900">{getDiscountedVariantPrice()} TL</span>
+                                <span className="text-base font-bold text-gray-500">{product.pricePerServing ?? ''} TL /Servis</span>
                             </div>
 
                             { }

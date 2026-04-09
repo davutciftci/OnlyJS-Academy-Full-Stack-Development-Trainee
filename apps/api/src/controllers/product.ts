@@ -15,7 +15,7 @@ export const searchProducts = asyncHandler(async (req: Request, res: Response, n
     const filters = {
         search: req.query.search as string,
         categoryId: req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined,
-        minPrice: req.query.minPrice ? parseFloat(req.query.minpPrice as string) : undefined,
+        minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
         maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
         activeOnly: req.query.activeOnly === 'true',
         sortBy: req.query.sortBy as string
@@ -24,7 +24,7 @@ export const searchProducts = asyncHandler(async (req: Request, res: Response, n
     const products = await searchAndFilterProducts(filters);
 
     // 30 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    //res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',
@@ -50,7 +50,7 @@ export const getPaginatedProductsList = asyncHandler(async (req: Request, res: R
     const result = await getPaginatedProducts(filters, page, limit);
 
     // 30 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    //res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',
@@ -75,7 +75,7 @@ export const getProducts = asyncHandler(async (
     const products = await searchAndFilterProducts(filters);
 
     // 30 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    //res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',
@@ -94,7 +94,7 @@ export const getProduct = asyncHandler(async (
     const product = await getProductById(id);
 
     // 30 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    //res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',
@@ -112,7 +112,7 @@ export const getProductBySlug = asyncHandler(async (
     const product = await getProductBySlugService(slug);
 
     // 30 dakika cache
-    res.setHeader('Cache-Control', 'public, max-age=1800');
+    //res.setHeader('Cache-Control', 'public, max-age=1800');
 
     res.status(200).json({
         status: 'success',

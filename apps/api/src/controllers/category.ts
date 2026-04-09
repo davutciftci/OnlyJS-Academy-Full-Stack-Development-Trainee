@@ -7,7 +7,7 @@ export const getCategories = asyncHandler(async (req: Request, res: Response, ne
     const categories = await getAllCategories(activeOnly);
 
     // 1 saat cache
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    //res.setHeader('Cache-Control', 'public, max-age=3600');
 
     res.status(200).json({
         status: 'success',
@@ -21,7 +21,7 @@ export const getCategory = asyncHandler(async (req: Request, res: Response, next
     const category = await getCategoryById(id);
 
     // 1 saat cache
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    //res.setHeader('Cache-Control', 'public, max-age=3600');
 
     res.status(200).json({
         status: 'success',

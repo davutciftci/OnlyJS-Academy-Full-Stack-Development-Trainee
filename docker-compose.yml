@@ -34,6 +34,9 @@ services:
   api:
     # Üretim (EC2) amd64; Mac ARM’de çekince uyarı yerine bilinçli emülasyon
     platform: linux/amd64
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
     image: davutciftci/onlyjs-api:latest
     ports:
       - "${API_PORT:-3000}:3000"

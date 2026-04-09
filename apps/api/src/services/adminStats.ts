@@ -207,8 +207,19 @@ export const getTopSellingProducts = async (page: number = 1, limit: number = 10
 
     const productsWithDetails = await Promise.all(
         topProducts.map(async (item) => {
+            const variantId = item.variantId;
+            if (variantId === null) {
+                return {
+                    variantId: null as number | null,
+                    productName: 'Silinmiş ürün',
+                    variantName: '-',
+                    totalSold: item._sum.quantity || 0,
+                    totalRevenue: Number(item._sum.subtotal || 0).toFixed(2),
+                };
+            }
+
             const variant = await prisma.productVariant.findUnique({
-                where: { id: item.variantId },
+                where: { id: variantId },
                 include: {
                     product: {
                         select: {
@@ -221,9 +232,9 @@ export const getTopSellingProducts = async (page: number = 1, limit: number = 10
             });
 
             return {
-                variantId: item.variantId,
-                productName: variant?.product.name || 'Bilinmeyen',
-                variantName: variant?.name || 'Bilinmeyen',
+                variantId,
+                productName: variant?.product?.name ?? 'Bilinmeyen',
+                variantName: variant?.name ?? 'Bilinmeyen',
                 totalSold: item._sum.quantity || 0,
                 totalRevenue: Number(item._sum.subtotal || 0).toFixed(2),
             };

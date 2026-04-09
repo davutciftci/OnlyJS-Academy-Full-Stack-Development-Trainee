@@ -14,6 +14,7 @@ export interface User {
 export interface LoginRequest {
     email: string;
     password: string;
+    'cf-turnstile-response'?: string;
 }
 
 export interface RegisterRequest {
@@ -22,6 +23,7 @@ export interface RegisterRequest {
     email: string;
     password: string;
     birth_date: string;
+    'cf-turnstile-response'?: string;
 }
 
 export interface AuthResponse {
