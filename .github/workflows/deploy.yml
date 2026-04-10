@@ -73,7 +73,12 @@ jobs:
           timeout: 120s
           command_timeout: 30m
           script: |
-            cd onlyjs-academy && git pull origin main && docker compose pull && WEB_PORT=80 docker compose up -d && docker system prune -f
+            cd onlyjs-academy && \
+            git pull origin main && \
+            docker system prune -af && \
+            docker compose pull && \
+            WEB_PORT=80 docker compose up -d && \
+            docker system prune -f
 
       - name: Remove SSH key
         if: always()
